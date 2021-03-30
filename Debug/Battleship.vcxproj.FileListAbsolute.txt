@@ -1,0 +1,2 @@
+C:\Users\David\source\repos\Battleship\Debug\Battleship.exe
+C:\Users\David\source\repos\Battleship\Debug\Battleship.pdb
