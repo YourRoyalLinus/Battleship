@@ -56,3 +56,14 @@ bool Board::placeShip(Ship& ship, std::vector<std::pair<int,int>> coords) {
 
 	return true;
 }
+
+std::vector<Square> Board::occupiedSquares() {
+	std::vector<Square> result;
+	for (auto row : squares) {
+		for (auto square : row) {
+			if (square.occupied)
+				result.push_back(square);
+		}
+	}
+	return result;
+}

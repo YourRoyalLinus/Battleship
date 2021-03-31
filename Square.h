@@ -6,13 +6,15 @@ class Square {
 	friend std::ostream& operator<<(std::ostream& os, Square& square);
 public:
 	//Square() = default;
-	Square(int row, int col, bool occupied = false) : x(row), y(col), occupied(occupied), type(Ship::Type::EMPTY) {}
+	Square(int x, int y, bool occupied = false) : row(x), col(y), occupied(occupied), type(Ship::Type::EMPTY) {}
 	bool occupied;
 	Ship::Type type;
+	int row;
+	int col;
 
 private:
-	int x;
-	int y;
+	/*int x;
+	int y;*/
 
 };
 

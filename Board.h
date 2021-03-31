@@ -15,6 +15,7 @@ public:
 	void print();
 	/* Try to place a piece. Return whether or not it was a valid placement */
 	bool Board::placeShip(Ship& ship, std::vector<std::pair<int, int>> coords);
+	std::vector<Square> occupiedSquares();
 
 
 
