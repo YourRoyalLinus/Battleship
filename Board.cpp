@@ -1,21 +1,19 @@
 #include "Board.h"
+#include "Renderer.h"
 
-/*Initialize the squares on the board with their Coordinates and being unoccupied*/
+
+const std::string Board::gridImagePath = "Textures\\BattleshipGrid.png";
+
 Board::Board() {
+	gridTexture = Renderer::loadTextureFromFile(gridImagePath);
+
+	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
 	for (int row = 0; row < BOARD_WIDTH; row++) {
 		currentRow.clear();
 		for (int col = 0; col < BOARD_HEIGHT; col++)
 			currentRow.push_back(Square(row, col));
 		squares.push_back(currentRow);
-	}
-}
-
-void Board::print() {
-	for (auto row : squares) {
-		for (auto sq : row)
-			std::cout << sq << " ";
-		std::cout << std::endl;
 	}
 }
 
@@ -47,12 +45,17 @@ bool Board::placeShip(Ship& ship, std::vector<std::pair<int,int>> coords) {
 		Square& square = squares[coord.first][coord.second];
 		if (square.occupied)
 			return false;
-		else {
-			//ship.occupying.push_back(square);
-			square.occupied = true;
-			square.type = ship.type;
-		}
 	}
+	/* If none of them were occupied place the ship*/
+	for (auto coord : coords) {
+		Square& square = squares[coord.first][coord.second];
+		ship.coords.push_back(coord);
+		square.occupied = true;
+		square.type = ship.type;
+	}
+	
+
+	activeShips.push_back(ship);
 
 	return true;
 }
@@ -66,4 +69,10 @@ std::vector<Square> Board::occupiedSquares() {
 		}
 	}
 	return result;
+}
+
+void Board::draw() {
+	Renderer::render(gridTexture);
+	for (auto ship : activeShips)
+		ship.draw();
 }

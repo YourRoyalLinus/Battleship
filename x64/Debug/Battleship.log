@@ -1,5 +1,7 @@
 ﻿  Board.cpp
   Main.cpp
+  Player.cpp
+  Renderer.cpp
   Ship.cpp
   Square.cpp
   Generating Code...
