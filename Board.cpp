@@ -1,12 +1,9 @@
 #include "Board.h"
 #include "Renderer.h"
+#include <algorithm>
 
-
-const std::string Board::gridImagePath = "Textures\\BattleshipGrid.png";
 
 Board::Board() {
-	gridTexture = Renderer::loadTextureFromFile(gridImagePath);
-
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
 	for (int row = 0; row < BOARD_WIDTH; row++) {
@@ -34,10 +31,10 @@ bool Board::placeShip(Ship& ship, std::vector<std::pair<int,int>> coords) {
 			col = coord.second;
 		}
 
-		if (coord.first >= BOARD_WIDTH || coord.second >= BOARD_HEIGHT 
-			|| coord.first < 0 || coord.second < 0 
-			|| (coord.first != row && coord.second != col) /* Because you can't place a piece diagonally, atleast 1 of row or col need to be the same the whole time */)
+		if (!validCoord(coord) || (coord.first != row && coord.second != col)) { // A ship can't be placed diagonally, so either the row or the col needs to stay the same the whole time
 			return false;
+		}
+
 	}
 
 	/* Now check if they are already occupied */
@@ -60,6 +57,16 @@ bool Board::placeShip(Ship& ship, std::vector<std::pair<int,int>> coords) {
 	return true;
 }
 
+void Board::print() {
+	for (auto row : squares) {
+		for (auto square : row) {
+			std::cout << (square.occupied ? "1" : "0") << " ";
+		}
+		std::cout << std::endl;
+	}
+
+}
+
 std::vector<Square> Board::occupiedSquares() {
 	std::vector<Square> result;
 	for (auto row : squares) {
@@ -73,6 +80,48 @@ std::vector<Square> Board::occupiedSquares() {
 
 void Board::draw() {
 	Renderer::render(gridTexture);
-	for (auto ship : activeShips)
-		ship.draw();
+	for (auto square : guessedSquares) {
+		SDL_Rect dest = { square.col * 75, square.row * 75 , 75, 75 }; //AGAIN Y = ROW, X = COL. I KEEP WRITING THIS BECAUSE IT IS VERY COUNTER-INTUITIVE TO ME!!!!
+		if (square.occupied) {
+			Renderer::render(hitIconTexture, 0, &dest);
+		}
+		else {
+			Renderer::render(missIconTexture, 0, &dest);
+		}
+	}
+}
+
+bool Board::guess(const std::pair<int, int> coord) {
+	Square& square = squares[coord.first][coord.second];
+	bool hit = validCoord(coord) && square.occupied;
+	//TODO this is really ugly and can probably be done a better way! Should the board even be doing this?
+	if (hit) {
+		damageHitShip(coord);
+	}
+	guessedSquares.push_back(square);
+	return hit;
+}
+
+bool Board::validCoord(const std::pair<int, int> coord) {
+	return coord.first < BOARD_WIDTH && coord.second < BOARD_HEIGHT && coord.first >= 0 && coord.second >= 0;
+}
+
+void Board::damageHitShip(std::pair<int,int> coord) {
+	for (auto start = activeShips.begin(); start != activeShips.end(); start++) {
+		Ship& ship = *start;
+		auto hitSquare = std::find(ship.coords.begin(), ship.coords.end(), coord);
+		if (hitSquare != ship.coords.end()) //if the ship contains the coord guess
+		{
+			start->hitsTaken++;
+			if (ship.sunk()) {
+				activeShips.erase(start);
+				std::cout << "Ship sunk!" << std::endl;
+				break;
+			}
+		}
+	}
+}
+
+Board::~Board() {
+
 }

@@ -21,14 +21,6 @@ public:
 	//TODO: this should be const and static but idk wtf I'm doing.
 	std::map<Type, int> sizes = { {Type::CARRIER,5},{Type::BATTLESHIP,4}, {Type::CRUISER,3}, {Type::SUBMARINE,3}, {Type::DESTROYER,2}, {Type::EMPTY,0} };
 
-	/*This is for moving the ship during setup*/
-	enum class Direction {
-		LEFT,
-		RIGHT,
-		UP,
-		DOWN
-	};
-
 	Ship(Type type);
 	Ship(): Ship(Type::EMPTY) {}
 
@@ -41,13 +33,15 @@ public:
 	//TODO: Where does this go? Who knows
 	void draw();
 
+	bool sunk() { return hitsTaken >= length; }
+
 	Type type;
 	std::vector<std::pair<int, int>> coords;
+	int hitsTaken;
 
 private:
 	int length;
 	bool rotated;
-	bool placed;
 	SDL_Texture* texture;
 	static const std::string imgPath;
 	

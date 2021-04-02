@@ -1,6 +1,8 @@
 ﻿  Board.cpp
   Main.cpp
   Player.cpp
+  PlayerBoard.cpp
+  RadarBoard.cpp
   Renderer.cpp
   Ship.cpp
   Square.cpp

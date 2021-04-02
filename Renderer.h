@@ -6,8 +6,11 @@
 class Renderer
 {
 public:
-	static const int SCREEN_WIDTH = 800;
-	static const int SCREEN_HEIGHT = 800;
+	static const int SCREEN_WIDTH = 1200;
+	static const int SCREEN_HEIGHT = 600;
+
+	static const SDL_Rect GUESS_BOARD_VIEWPORT;
+	static const SDL_Rect PLACE_BOARD_VIEWPORT;
 
 	static void init();
 	static SDL_Texture* loadTextureFromFile(std::string filePath);
@@ -18,6 +21,7 @@ public:
 	   dest = SDL_Rect describing render destination */
 	static void render(SDL_Texture* texture, const SDL_Rect* clip = 0, const SDL_Rect* dest = 0);
 	static void present();
+	static void setViewPort(const SDL_Rect* viewport = 0);
 	
 
 	

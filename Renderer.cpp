@@ -5,6 +5,9 @@
 SDL_Window* Renderer::window = nullptr;
 SDL_Renderer* Renderer::renderer = nullptr;
 
+const SDL_Rect Renderer::GUESS_BOARD_VIEWPORT = { 0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT };
+const SDL_Rect Renderer::PLACE_BOARD_VIEWPORT = { GUESS_BOARD_VIEWPORT.w , 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT };
+
 void Renderer::init() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 		throw("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -63,6 +66,10 @@ void Renderer::clear() {
 
 void Renderer::present() {
 	SDL_RenderPresent(renderer);
+}
+
+void Renderer::setViewPort(const SDL_Rect* viewport) {
+	SDL_RenderSetViewport(renderer, viewport);
 }
 
 void Renderer::cleanup() {
