@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{4b2fee48-c8e6-43e1-a9ae-eacefcef8233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Font">
+      <UniqueIdentifier>{596cc1bb-7ce5-4357-a162-7798d09d48d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -39,6 +45,9 @@
     <ClCompile Include="RadarBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -62,28 +71,54 @@
     <ClInclude Include="RadarBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\BattleshipGrid.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Textures\Ship.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Textures\BattleshipGuessBoard.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Textures\BattleShip_Miss.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Textures\Battleship.png">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Battleship_Hit.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\BattleShip_Radar_Miss.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Textures\BattleShip_Miss.png">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleShip_Radar_Hit.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
+    <Image Include="Textures\BattleShip_Radar_Miss.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\BattleshipChat.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\BattleshipGrid.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\BattleshipGuessBoard.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\Carrier.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\Cruiser.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\Destroyer.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\Ship.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\Submarine.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="PIXEARG_.TTF">
+      <Filter>Resource Files\Font</Filter>
+    </Font>
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@
 #include <algorithm>
 
 
+
 Board::Board() {
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
@@ -115,7 +116,7 @@ void Board::damageHitShip(std::pair<int,int> coord) {
 			start->hitsTaken++;
 			if (ship.sunk()) {
 				activeShips.erase(start);
-				std::cout << "Ship sunk!" << std::endl;
+				std::cout <<"Ship sunk!" << std::endl;
 				break;
 			}
 		}

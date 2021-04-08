@@ -9,9 +9,9 @@ PlayerBoard::PlayerBoard() {
 
 	hitIconImagePath = "Textures\\Battleship_Hit.png";
 
-	gridTexture = Renderer::loadTextureFromFile(gridImagePath);
-	missIconTexture = Renderer::loadTextureFromFile(missIconImagePath);
-	hitIconTexture = Renderer::loadTextureFromFile(hitIconImagePath);
+	gridTexture.loadFromFile(gridImagePath);
+	missIconTexture.loadFromFile(missIconImagePath);
+	hitIconTexture.loadFromFile(hitIconImagePath);
 }
 
 void PlayerBoard::draw() {

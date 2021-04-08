@@ -7,13 +7,15 @@
 #include "Player.h"
 #include <utility>
 #include <set>
+#include "Texture.h"
 
 /* This is an abstract base class for derived board classes */
 class Board {
 
 public:
 	static const int BOARD_WIDTH = 8;
-	static const int BOARD_HEIGHT = 8;
+	static const int BOARD_HEIGHT = 8; 
+	static const int SQUARE_PIXEL_SIZE = 75;
 
 	Board();
 
@@ -48,13 +50,13 @@ protected:
 	std::vector<Square> guessedSquares;
 
 	/* The pretty grid picture */
-	SDL_Texture* gridTexture;
+	Texture gridTexture;
 
 	/* Icon you display on a square if the player guessed that square and it was a miss */
-	SDL_Texture* missIconTexture;
+	Texture missIconTexture;
 
 	/* Icon you display on a square if the player guessed that square and it was a hit */
-	SDL_Texture* hitIconTexture;
+	Texture hitIconTexture;
 
 	/* relative path of grid texture file */
 	std::string gridImagePath;

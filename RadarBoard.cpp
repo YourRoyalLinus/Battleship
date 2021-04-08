@@ -9,13 +9,13 @@ RadarBoard::RadarBoard() {
 
 	hitIconImagePath = "Textures\\Battleship_Radar_Hit.png";
 
-	gridTexture = Renderer::loadTextureFromFile(gridImagePath);
-	missIconTexture = Renderer::loadTextureFromFile(missIconImagePath);
-	hitIconTexture = Renderer::loadTextureFromFile(hitIconImagePath);
+	gridTexture.loadFromFile(gridImagePath);
+	missIconTexture.loadFromFile(missIconImagePath);
+	hitIconTexture.loadFromFile(hitIconImagePath);
+
 }
 
 void RadarBoard::draw() {
 	Renderer::setViewPort(&Renderer::GUESS_BOARD_VIEWPORT);
 	Board::draw();
-	//TODO: DUMB HACK!
 }

@@ -7,13 +7,12 @@
 #include <ctime>
 #include "PlayerBoard.h"
 #include "RadarBoard.h"
-
-
+#include <SDL_ttf.h>
+#include "Texture.h"
 //TODO: LEAKING MEMORY RIGHT NOW FROM EVERYWHERE THAT USES A TEXTURE!!!!!! UH OH!!!! Implement destructors
 
-const int SQUARE_PIXEL_WIDTH = 75; //Magic numbers WOW!
+const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
 const int SQUARE_PIXEL_HEIGHT = 75;
-
 
 enum class GameState {
 	SETUP,
@@ -48,11 +47,14 @@ int main(int argc, char* argv[]) {
 	PlayerBoard humanBoard;
 	//Computer board which looks like a radar board to the player
 	RadarBoard computerBoard;
-	
+
+	Texture chatBox("Textures\\BattleshipChat.png");
+
 
 	state = GameState::SETUP;
 
 	SDL_Event event; //input event
+	
 
 	while (state == GameState::SETUP) {
 
@@ -70,37 +72,44 @@ int main(int argc, char* argv[]) {
 
 			while (SDL_PollEvent(&event) != 0) {
 				Renderer::clear();
+
+				//Draw Chat box
+				Renderer::setViewPort(&Renderer::CHAT_VIEWPORT);
+				Renderer::render(chatBox);
 				
 				computerBoard.draw();
 				humanBoard.draw();
 
+				SDL_GetMouseState(&mouseXSquare, &mouseYSquare);
+				/* Stupid hack!!! adjust the mouse by setup board position offset */
+				mouseXSquare -= Renderer::GUESS_BOARD_VIEWPORT.w + Renderer::CHAT_VIEWPORT.w;
+				/* Clamp position to grid square size */
+				mouseXSquare /= Board::SQUARE_PIXEL_SIZE;
+				mouseYSquare /= Board::SQUARE_PIXEL_SIZE;
+
+				currentShipRef.snapToPosition({ mouseYSquare, mouseXSquare }); //Ypos = row, Xpos = col.
+				currentShipRef.draw();
+
+
 				if (event.type == SDL_QUIT) {
 					exit(-1);
 				}
-				if (event.type == SDL_MOUSEMOTION) {
-					SDL_GetMouseState(&mouseXSquare, &mouseYSquare);
-					/* Stupid hack!!! adjust the mouse by setup board position offset */
-					mouseXSquare -= Renderer::GUESS_BOARD_VIEWPORT.w;
-					/* Clamp position to grid square size */
-					mouseXSquare /= SQUARE_PIXEL_WIDTH;
-					mouseYSquare /= SQUARE_PIXEL_HEIGHT;
-
-					currentShipRef.snapToPosition({ mouseYSquare, mouseXSquare }); //Ypos = row, Xpos = col.
-					currentShipRef.draw();
-				}
+								
 				if (event.type == SDL_MOUSEBUTTONDOWN) {
 					if (event.button.button == SDL_BUTTON_LEFT) { //button.button ???? OK
 						if (humanBoard.placeShip(currentShipRef, currentShipRef.coords))
 						{
 							human.ships.pop_back();
+							humanBoard.print();
 						}
 						else {
-							printf("You can't place a ship there!\n");
+							
+							printf("You can't place a ship there!\n"); 
+							
 						}
 					}
 					else if (event.button.button == SDL_BUTTON_RIGHT) {
 						currentShipRef.rotate();
-						currentShipRef.draw();
 					}
 
 				}
@@ -122,7 +131,8 @@ int main(int argc, char* argv[]) {
 					computer.ships.pop_back();
 				}
 			}
-			computerBoard.print();
+			humanBoard.print();
+			//computerBoard.print();
 			state = GameState::PLAYING;
 			humanTurn = true;
 		}
@@ -132,7 +142,6 @@ int main(int argc, char* argv[]) {
 	while (state == GameState::PLAYING) {
 
 		if (humanTurn) {
-			//std::cout << "Guess a ship position!" << std::endl;
 			//Handle events on queue
 			while (SDL_PollEvent(&event) != 0)
 			{
@@ -149,17 +158,17 @@ int main(int argc, char* argv[]) {
 
 						SDL_GetMouseState(&mouseXSquare, &mouseYSquare);
 
+						/* Stupid hack!!! adjust the mouse by setup board position offset */
+						mouseXSquare -= Renderer::CHAT_VIEWPORT.w;
+
 						/* Clamp position to grid square size */
-						mouseXSquare /= SQUARE_PIXEL_WIDTH;
-						mouseYSquare /= SQUARE_PIXEL_HEIGHT;
+						mouseXSquare /= Board::SQUARE_PIXEL_SIZE;
+						mouseYSquare /= Board::SQUARE_PIXEL_SIZE;
 
-						std::cout << "You guessed ROW: " << mouseYSquare << "COL: " << mouseXSquare << std::endl;
+						//std::cout << "You guessed ROW: " << mouseYSquare << "COL: " << mouseXSquare << std::endl;
 
-						if (computerBoard.guess({ mouseYSquare, mouseXSquare })) //Again Y = ROW, X = COL!
-							std::cout << "Human Player HIT!!!!!" << std::endl;
-						/*else
-							std::cout << "Human player MISSED!" << std::endl;*/
-
+						computerBoard.guess({ mouseYSquare, mouseXSquare }); //Again Y = ROW, X = COL!
+					
 						humanTurn = false;
 					}
 				}
@@ -171,8 +180,6 @@ int main(int argc, char* argv[]) {
 			int row = rand() % 8;
 			int col = rand() % 8;
 
-			std::cout << "Computer player guessed  ROW: " << row << " COL: " << col << std::endl;
-
 			humanBoard.guess({ row, col });
 		
 			humanTurn = true;
@@ -181,6 +188,10 @@ int main(int argc, char* argv[]) {
 		
 
 		Renderer::clear();
+
+		//Draw Chat box
+		Renderer::setViewPort(&Renderer::CHAT_VIEWPORT);
+		Renderer::render(chatBox);
 		
 		computerBoard.draw();
 		humanBoard.draw();
