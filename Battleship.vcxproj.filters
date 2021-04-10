@@ -19,6 +19,9 @@
     <Filter Include="Resource Files\Font">
       <UniqueIdentifier>{596cc1bb-7ce5-4357-a162-7798d09d48d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\glad">
+      <UniqueIdentifier>{b7ae8d7e-8226-47e5-a2e8-4d9abac8e677}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -36,17 +39,14 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RadarBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\vclib\glad\src\glad.c">
+      <Filter>Source Files\glad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,16 +62,10 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RadarBoard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -120,5 +114,10 @@
     <Font Include="PIXEARG_.TTF">
       <Filter>Resource Files\Font</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

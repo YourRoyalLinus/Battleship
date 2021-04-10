@@ -1,18 +1,81 @@
 #include <SDL.h>
+#include <glad.h>
 #include <SDL_image.h>
 #include "Board.h"
 #include "Player.h"
 #include <algorithm>
-#include "Renderer.h"
 #include <ctime>
 #include "PlayerBoard.h"
 #include "RadarBoard.h"
 #include <SDL_ttf.h>
-#include "Texture.h"
+#include <SDL_opengl.h>
 //TODO: LEAKING MEMORY RIGHT NOW FROM EVERYWHERE THAT USES A TEXTURE!!!!!! UH OH!!!! Implement destructors
+
+
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
 const int SQUARE_PIXEL_HEIGHT = 75;
+
+
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//OpenGL context
+SDL_GLContext gContext;
+
+void init() {
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
+		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+	}
+	SDL_GL_LoadLibrary(NULL);
+
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
+
+	gWindow = SDL_CreateWindow( "BATTLESHIP", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+	if( gWindow == NULL ){
+		printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+	}
+	
+	//Create context
+	gContext = SDL_GL_CreateContext( gWindow );
+	if( gContext == NULL ){
+		printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
+	}
+	
+	// Check OpenGL properties
+	printf("OpenGL loaded\n");
+	if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
+		printf("Failed to initialize GLAD!");
+		exit(-2);
+	}
+	printf("Vendor:   %s\n", glGetString(GL_VENDOR));
+	printf("Renderer: %s\n", glGetString(GL_RENDERER));
+	printf("Version:  %s\n", glGetString(GL_VERSION));
+
+
+	//Use Vsync
+	if( SDL_GL_SetSwapInterval( 1 ) < 0 )
+	{
+		printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+	}
+
+	// Disable depth test and face culling.
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	SDL_GL_SwapWindow(gWindow);
+
+
+		
+}
 
 enum class GameState {
 	SETUP,
@@ -25,10 +88,10 @@ bool humanTurn = true;
 
 void teardown() {
 	
-	Renderer::cleanup();
 	IMG_Quit();
 	SDL_Quit();
 }
+
 
 int main(int argc, char* argv[]) {
 
@@ -36,7 +99,7 @@ int main(int argc, char* argv[]) {
 	srand((unsigned)time(NULL));
 
 	//Initialize SDL
-	Renderer::init();
+	init();
 
 	
 	//Make human player
@@ -48,7 +111,7 @@ int main(int argc, char* argv[]) {
 	//Computer board which looks like a radar board to the player
 	RadarBoard computerBoard;
 
-	Texture chatBox("Textures\\BattleshipChat.png");
+	//Texture chatBox("Textures\\BattleshipChat.png");
 
 
 	state = GameState::SETUP;
@@ -71,20 +134,15 @@ int main(int argc, char* argv[]) {
 			int mouseXSquare, mouseYSquare; //what square is the mouse currently in.
 
 			while (SDL_PollEvent(&event) != 0) {
-				Renderer::clear();
-
-				//Draw Chat box
-				Renderer::setViewPort(&Renderer::CHAT_VIEWPORT);
-				Renderer::render(chatBox);
 				
 				computerBoard.draw();
 				humanBoard.draw();
 
 				SDL_GetMouseState(&mouseXSquare, &mouseYSquare);
 				/* Stupid hack!!! adjust the mouse by setup board position offset */
-				mouseXSquare -= Renderer::GUESS_BOARD_VIEWPORT.w + Renderer::CHAT_VIEWPORT.w;
+				//mouseXSquare -= Renderer::GUESS_BOARD_VIEWPORT.w + Renderer::CHAT_VIEWPORT.w;
 				/* Clamp position to grid square size */
-				mouseXSquare /= Board::SQUARE_PIXEL_SIZE;
+				//mouseXSquare /= Board::SQUARE_PIXEL_SIZE;
 				mouseYSquare /= Board::SQUARE_PIXEL_SIZE;
 
 				currentShipRef.snapToPosition({ mouseYSquare, mouseXSquare }); //Ypos = row, Xpos = col.
@@ -114,7 +172,6 @@ int main(int argc, char* argv[]) {
 
 				}
 
-				Renderer::present();
 			}
 		}
 
@@ -159,7 +216,7 @@ int main(int argc, char* argv[]) {
 						SDL_GetMouseState(&mouseXSquare, &mouseYSquare);
 
 						/* Stupid hack!!! adjust the mouse by setup board position offset */
-						mouseXSquare -= Renderer::CHAT_VIEWPORT.w;
+						//mouseXSquare -= Renderer::CHAT_VIEWPORT.w;
 
 						/* Clamp position to grid square size */
 						mouseXSquare /= Board::SQUARE_PIXEL_SIZE;
@@ -187,16 +244,11 @@ int main(int argc, char* argv[]) {
 		}
 		
 
-		Renderer::clear();
 
-		//Draw Chat box
-		Renderer::setViewPort(&Renderer::CHAT_VIEWPORT);
-		Renderer::render(chatBox);
 		
 		computerBoard.draw();
 		humanBoard.draw();
 	
-		Renderer::present();
 
 		if (humanBoard.activeShips.empty()) {
 			state = GameState::OVER;
@@ -213,3 +265,5 @@ int main(int argc, char* argv[]) {
 	return 0;
 	
 }
+
+

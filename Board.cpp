@@ -1,5 +1,4 @@
 #include "Board.h"
-#include "Renderer.h"
 #include <algorithm>
 
 
@@ -80,16 +79,16 @@ std::vector<Square> Board::occupiedSquares() {
 }
 
 void Board::draw() {
-	Renderer::render(gridTexture);
-	for (auto square : guessedSquares) {
-		SDL_Rect dest = { square.col * 75, square.row * 75 , 75, 75 }; //AGAIN Y = ROW, X = COL. I KEEP WRITING THIS BECAUSE IT IS VERY COUNTER-INTUITIVE TO ME!!!!
-		if (square.occupied) {
-			Renderer::render(hitIconTexture, 0, &dest);
-		}
-		else {
-			Renderer::render(missIconTexture, 0, &dest);
-		}
-	}
+	//Renderer::render(gridTexture);
+	//for (auto square : guessedSquares) {
+	//	SDL_Rect dest = { square.col * 75, square.row * 75 , 75, 75 }; //AGAIN Y = ROW, X = COL. I KEEP WRITING THIS BECAUSE IT IS VERY COUNTER-INTUITIVE TO ME!!!!
+	//	if (square.occupied) {
+	//		Renderer::render(hitIconTexture, 0, &dest);
+	//	}
+	//	else {
+	//		Renderer::render(missIconTexture, 0, &dest);
+	//	}
+	//}
 }
 
 bool Board::guess(const std::pair<int, int> coord) {

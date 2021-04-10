@@ -1,12 +1,11 @@
 #include "Ship.h"
 #include <algorithm>
 #include <utility>
-#include "Renderer.h"
 #include "Board.h"
 
 
 Ship::Ship(Type type): type(type),length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0), imgPath(images[type]) {
-	texture.reset(new Texture(imgPath));
+	//texture.reset(new Texture(imgPath));
 	for (int i = 0; i <= length; i++) {
 		coords.push_back({ 0,i });
 	}
@@ -46,11 +45,11 @@ void Ship::snapToPosition(std::pair<int,int> position) {
 }
 
 void Ship::draw() {
-	constexpr auto SQ_SIZE = Board::SQUARE_PIXEL_SIZE;
+	//constexpr auto SQ_SIZE = Board::SQUARE_PIXEL_SIZE;
 
-	SDL_Rect dest = { coords[0].second * SQ_SIZE, coords[0].first * SQ_SIZE, SQ_SIZE * length, SQ_SIZE };
-	SDL_Point center = { SQ_SIZE/2, SQ_SIZE/2 }; //Middle of a square
-	Renderer::renderEx(*texture, 0, &dest, static_cast<int>(orientation) * 90, &center);
+	//SDL_Rect dest = { coords[0].second * SQ_SIZE, coords[0].first * SQ_SIZE, SQ_SIZE * length, SQ_SIZE };
+	//SDL_Point center = { SQ_SIZE/2, SQ_SIZE/2 }; //Middle of a square
+	//Renderer::renderEx(*texture, 0, &dest, static_cast<int>(orientation) * 90, &center);
 
 	
 }

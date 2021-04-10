@@ -5,7 +5,6 @@
 #include <memory>
 #include <SDL_image.h>
 #include <string>
-#include "Texture.h"
 
 
 class Ship {
@@ -51,7 +50,7 @@ public:
 private:
 	int length;
 	Orientation orientation;
-	std::shared_ptr<Texture> texture;
+//	std::shared_ptr<Texture> texture;
 	std::string imgPath;
 	std::vector<std::pair<int, int>> getCoordsRelativeToPivot(std::pair<int,int> pivot);
 	int dotPoduct2(std::pair<int, int> vec1, std::pair<int, int> vec2);

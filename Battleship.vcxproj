@@ -69,11 +69,11 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -118,25 +118,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBoard.cpp" />
     <ClCompile Include="RadarBoard.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Square.cpp" />
-    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBoard.h" />
     <ClInclude Include="RadarBoard.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Square.h" />
-    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Battleship.png" />
@@ -155,6 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="PIXEARG_.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
