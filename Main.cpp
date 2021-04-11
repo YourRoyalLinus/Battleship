@@ -1,5 +1,7 @@
 #include <SDL.h>
 #include <glad.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 #include <SDL_image.h>
 #include "Board.h"
 #include "Player.h"
@@ -10,6 +12,10 @@
 #include <SDL_ttf.h>
 #include <SDL_opengl.h>
 #include "Shader.h"
+#include <stb_image.h>
+#include "Texture2D.h"
+#include "ResourceManager.h"
+#include "SpriteRenderer.h"
 //TODO: LEAKING MEMORY RIGHT NOW FROM EVERYWHERE THAT USES A TEXTURE!!!!!! UH OH!!!! Implement destructors
 
 
@@ -106,59 +112,32 @@ int main(int argc, char* argv[]) {
 	//Initialize SDL
 	init();
 
-	Shader shader("vertex_test.vert", "fragment_test.frag");
+	//Load Shaders
+	ResourceManager::loadShader("vertex_test.vert", "fragment_test.frag", "sprite");
+	//Create Orthographic Projection Matrix
+	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
+	//Configure shaders
+	ResourceManager::getShader("sprite").use().setUniformInt("image", 0);
+	ResourceManager::getShader("sprite").setMat4("projection", projection);
 
-
-	//Set up vertex buffer and index buffer
-	float vertices[] = {
-		// positions         // colors
-		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-	};
-
-	//Create Vertex Array Object, Vertex Buffer Object, & Element Buffer Object. 
-	GLuint VAO, VBO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	//Bind VAO
-	glBindVertexArray(VAO);
-	//Bind and configure buffers.
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indeces), indeces, GL_STATIC_DRAW);*/
-
-	//position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    //glBindVertexArray(0); 
-
-
-
+	SpriteRenderer* renderer = new SpriteRenderer(ResourceManager::getShader("sprite"));
+	
+	//Load Textures
+	ResourceManager::loadTexture("Textures\\BattleshipGrid.png", true, "grid");
 
 
 	//TODO:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TEST CODE FOR GL STUFF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	while (1) {
 		update();
-		
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		shader.use();
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
 
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+		
+
+		renderer->DrawSprite(ResourceManager::getTexture("grid"), glm::vec2(0.0f, 0.0f), glm::vec2(800.0f, 600.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+		
 		SDL_GL_SwapWindow(window);
 
 

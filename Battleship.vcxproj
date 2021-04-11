@@ -69,11 +69,11 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -124,18 +124,25 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBoard.cpp" />
     <ClCompile Include="RadarBoard.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Square.cpp" />
+    <ClCompile Include="stb_configs.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBoard.h" />
     <ClInclude Include="RadarBoard.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Square.h" />
+    <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Battleship.png" />
