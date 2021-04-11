@@ -124,6 +124,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBoard.cpp" />
     <ClCompile Include="RadarBoard.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Square.cpp" />
   </ItemGroup>
@@ -132,6 +133,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBoard.h" />
     <ClInclude Include="RadarBoard.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Square.h" />
   </ItemGroup>
@@ -152,6 +154,10 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="PIXEARG_.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment_test.frag" />
+    <None Include="vertex_test.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
