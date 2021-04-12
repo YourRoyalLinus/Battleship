@@ -5,9 +5,10 @@
 #include <memory>
 #include <SDL_image.h>
 #include <string>
+#include "Entity.h"
 
 
-class Ship {
+class Ship : public Entity {
 public:
 	enum class Type {
 		CARRIER,
@@ -20,14 +21,14 @@ public:
 
 	enum class Orientation {
 	    LEFT,
-		UP,
+		DOWN,
 		RIGHT,
-		DOWN
+		UP
 	};
 
 	//TODO: this should be const and static but idk wtf I'm doing.
 	std::map<Type, int> sizes = { {Type::CARRIER,5},{Type::BATTLESHIP,4}, {Type::CRUISER,3}, {Type::SUBMARINE,3}, {Type::DESTROYER,2}, {Type::EMPTY,0} };
-	std::map<Type, std::string> images = { {Type::CARRIER,"Textures\\Carrier.png"},{Type::BATTLESHIP,"Textures\\Battleship.png"}, {Type::CRUISER,"Textures\\Cruiser.png"}, {Type::SUBMARINE,"Textures\\Submarine2.png"}, {Type::DESTROYER,"Textures\\Destroyer2.png"}, {Type::EMPTY,""} };
+	std::map<Type, std::string> sprites = { {Type::CARRIER,"carrier"},{Type::BATTLESHIP,"battleship"}, {Type::CRUISER,"cruiser"}, {Type::SUBMARINE,"submarine"}, {Type::DESTROYER,"destroyer"}, {Type::EMPTY,""} };
 
 	Ship(Type type);
 	Ship(): Ship(Type::EMPTY) {}
@@ -38,10 +39,9 @@ public:
 	//Rotating needs to be more complicated but this is a hack for now. Doing this will update the coords when you next call snapToPosition.
 	void rotate();
 
-	//TODO: Where does this go? Who knows
-	void draw();
-
 	bool sunk() { return hitsTaken >= length; }
+
+	void draw(SpriteRenderer& renderer) override;
 
 	Type type;
 	std::vector<std::pair<int, int>> coords;
@@ -50,8 +50,6 @@ public:
 private:
 	int length;
 	Orientation orientation;
-//	std::shared_ptr<Texture> texture;
-	std::string imgPath;
 	std::vector<std::pair<int, int>> getCoordsRelativeToPivot(std::pair<int,int> pivot);
 	int dotPoduct2(std::pair<int, int> vec1, std::pair<int, int> vec2);
 	std::pair<int, int> vectorMatrixProduct2(std::pair<int, int> vec, std::pair<std::pair<int, int>, std::pair<int, int>> mat);

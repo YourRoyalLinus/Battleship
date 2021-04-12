@@ -2,10 +2,12 @@
 #include <algorithm>
 #include <utility>
 #include "Board.h"
+#include "ResourceManager.h"
 
 
-Ship::Ship(Type type): type(type),length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0), imgPath(images[type]) {
-	//texture.reset(new Texture(imgPath));
+Ship::Ship(Type type): type(type), length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0) {
+	sprite = ResourceManager::getTexture(sprites[type]);
+	size = glm::vec2(length * Board::SQUARE_PIXEL_SIZE, Board::SQUARE_PIXEL_SIZE);
 	for (int i = 0; i <= length; i++) {
 		coords.push_back({ 0,i });
 	}
@@ -22,49 +24,54 @@ std::pair<int, int> operator-(const std::pair<int, int>& lhs, const std::pair<in
 	return std::make_pair(lhs.first - rhs.first, lhs.second - rhs.second);
 }
 
-void Ship::snapToPosition(std::pair<int,int> position) {
+void Ship::snapToPosition(std::pair<int,int> newPosition) {
 	coords.clear();
 	for (int i = 0; i < length; i++) {
 		// Here the orientation refers to where the head of the ship points. So if the orientation is LEFT for example the rest of the ship expands to the right, etc.
 		// TODO:This is pretty confusing and bad I should probably change this later
 		switch (orientation) {
 		case Orientation::LEFT:
-			coords.push_back(position + std::make_pair(0, i));
+			coords.push_back(newPosition + std::make_pair(0, i));
 			break;
 		case Orientation::UP:
-			coords.push_back(position + std::make_pair(i, 0));
+			coords.push_back(newPosition + std::make_pair(i, 0));
 			break;
 		case Orientation::RIGHT:
-			coords.push_back(position + std::make_pair(0, -i));
+			coords.push_back(newPosition + std::make_pair(0, -i));
 			break;
 		case Orientation::DOWN:
-			coords.push_back(position + std::make_pair(-i, 0));
+			coords.push_back(newPosition + std::make_pair(-i, 0));
 			break;
 		}
 	}
-}
 
-void Ship::draw() {
-	//constexpr auto SQ_SIZE = Board::SQUARE_PIXEL_SIZE;
-
-	//SDL_Rect dest = { coords[0].second * SQ_SIZE, coords[0].first * SQ_SIZE, SQ_SIZE * length, SQ_SIZE };
-	//SDL_Point center = { SQ_SIZE/2, SQ_SIZE/2 }; //Middle of a square
-	//Renderer::renderEx(*texture, 0, &dest, static_cast<int>(orientation) * 90, &center);
-
+	position.x = coords[0].second * Board::SQUARE_PIXEL_SIZE + 600;
+	position.y = coords[0].first * Board::SQUARE_PIXEL_SIZE;
 	
 }
 
+
 void Ship::rotate() {
-	std::pair<int, int> pivot = coords[0];
-	std::vector<std::pair<int, int>> relativeCoords = getCoordsRelativeToPivot(pivot);
+//	std::pair<int, int> pivot = coords[0];
+//	std::vector<std::pair<int, int>> relativeCoords = getCoordsRelativeToPivot(pivot);
 	std::pair<std::pair<int, int>, std::pair<int, int>> rotationMatrix = { { 0 , 1}, { -1, 0 } };
-	for (auto& coord : relativeCoords) {
+	for (auto& coord : coords) {
 		auto localCoord = vectorMatrixProduct2(coord, rotationMatrix);
-		coord = localCoord + pivot;
+//		coord = localCoord + pivot;
 	}
-	coords = relativeCoords;
+	//coords = relativeCoords;
 	orientation = static_cast<Orientation>((static_cast<int>(orientation) + 1) % 4);
+
+	rotation -= 90 % 360;
+	snapToPosition(coords[0]);
+
 }
+
+void Ship::draw(SpriteRenderer& renderer) {
+	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2));
+}
+
+
 
 //TODO: This bit of linear algebra code can probably be put somewhere else but the ship is the only thing in the game that rotates so for now its here.
 std::vector<std::pair<int, int>> Ship::getCoordsRelativeToPivot(std::pair<int,int> pivot) {

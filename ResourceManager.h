@@ -3,6 +3,10 @@
 #include <string>
 #include "Shader.h"
 #include "Texture2D.h"
+#include <map>
+//#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <chrono>
+#include <filesystem>
 class ResourceManager
 {
 public:
@@ -17,6 +21,8 @@ public:
     static Texture2D loadTexture(const char* file, bool alpha, std::string name);
     //Retrieves a stored texture
     static Texture2D getTexture(std::string name);
+
+    static void hotReload();
     //Properly de-allocates all loaded resources
     static void clear();
 private:
@@ -26,6 +32,8 @@ private:
     static Shader loadShaderFromFile(const char* vShaderFile, const char* fShaderFile);
     //Loads a single texture from file
     static Texture2D loadTextureFromFile(const char* file, bool alpha);
+    //maps shader file to time last changed used for hot reloading
+    static std::map<std::string, std::filesystem::file_time_type> shaderChangeTimes;
 };
 
 

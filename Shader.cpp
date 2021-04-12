@@ -7,22 +7,23 @@ Shader &Shader::use()
     return *this;
 }
 
-void Shader::compile(const char *vertexSource, const char *fragmentSource){
+bool Shader::compile(const char *vertexSource, const char *fragmentSource){
     
     GLuint vertex, fragment;
+
+    bool success = true;
 
     //Vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vertexSource, NULL);
     glCompileShader(vertex);
-    checkCompileErrors(vertex, "VERTEX");
-
+    success = checkCompileErrors(vertex, "VERTEX");
 
     //Fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fragmentSource, NULL);
     glCompileShader(fragment);
-    checkCompileErrors(fragment, "FRAGMENT");
+    success = checkCompileErrors(fragment, "FRAGMENT");
 
 
     //Shader Program
@@ -30,16 +31,18 @@ void Shader::compile(const char *vertexSource, const char *fragmentSource){
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
-    checkCompileErrors(ID, "PROGRAM");
+    success = checkCompileErrors(ID, "PROGRAM");
 
     //Delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
+    return success;
+
 }
 
-void Shader::checkCompileErrors(GLuint shader, std::string shaderType)
-    {
+bool Shader::checkCompileErrors(GLuint shader, std::string shaderType){
+        bool compiled = true;
         int success;
         char infoLog[1024];
         if (shaderType != "PROGRAM")
@@ -49,6 +52,7 @@ void Shader::checkCompileErrors(GLuint shader, std::string shaderType)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
                 std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << shaderType << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                compiled = false;
             }
         }
         else
@@ -58,6 +62,8 @@ void Shader::checkCompileErrors(GLuint shader, std::string shaderType)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
                 std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << shaderType << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                compiled = false;
             }
         }
-    }
+        return compiled;
+}

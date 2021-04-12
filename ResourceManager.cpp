@@ -5,12 +5,23 @@
 //init static members
 std::map<std::string, Texture2D> ResourceManager::textures;
 std::map<std::string, Shader> ResourceManager::shaders;
+std::map<std::string, std::filesystem::file_time_type> ResourceManager::shaderChangeTimes;
 
 
 Shader ResourceManager::loadShader(const char *vShaderFile, const char *fShaderFile, std::string name)
 {
-    shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile);
-    return shaders[name];
+    Shader shader = loadShaderFromFile(vShaderFile, fShaderFile);
+    shader.name = name;
+     
+    //update last write times
+    auto vertexWriteTime = std::filesystem::last_write_time(vShaderFile);
+    auto fragmentWriteTime = std::filesystem::last_write_time(fShaderFile);
+    shaderChangeTimes[vShaderFile] = vertexWriteTime;
+    shaderChangeTimes[fShaderFile] = fragmentWriteTime;
+
+    //store shader
+    shaders[name] = shader;
+    return shader;
 }
 
 Shader ResourceManager::getShader(std::string name)
@@ -73,8 +84,12 @@ Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *
 
     //Noww create shader object from source code
     Shader shader;
-    shader.compile(vShaderCode, fShaderCode);
+    if (shader.compile(vShaderCode, fShaderCode)) {
+        shader.vertexSource = vShaderFile;
+        shader.fragmentSource = fShaderFile;
+    }
     return shader;
+
 }
 
 Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
@@ -83,18 +98,38 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
     Texture2D texture;
     //I'm assuming images are RGBA by default, if they aren't change that!
     if (!alpha){
-        texture.Internal_Format = GL_RGB;
-        texture.Image_Format = GL_RGB;
+        texture.internalFormat = GL_RGB;
+        texture.imageFormat = GL_RGB;
     }
     //Load image
     int width, height, nrChannels;
     unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
 
     //Generate texture
-    texture.Generate(width, height, data);
+    texture.generate(width, height, data);
 
     //Finally free image data
     stbi_image_free(data);
 
     return texture;
+}
+
+void ResourceManager::hotReload() {
+    for (auto it = shaderChangeTimes.begin(); it != shaderChangeTimes.end(); it++) {
+        std::string currentSource = it->first;
+        
+        auto currentWriteTime = std::filesystem::last_write_time(currentSource);
+        if (currentWriteTime != shaderChangeTimes[currentSource]) {
+            //for all shaders that use this source, reload them
+            for (auto it = shaders.begin(); it != shaders.end(); it++) {
+                Shader shader = it->second;
+                if (shader.vertexSource == currentSource || shader.fragmentSource == currentSource) {
+                    loadShader(shader.vertexSource.c_str(), shader.fragmentSource.c_str(), shader.name);
+                }
+            }
+        }
+                
+
+    }
+
 }

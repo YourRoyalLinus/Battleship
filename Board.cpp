@@ -1,9 +1,14 @@
 #include "Board.h"
 #include <algorithm>
+#include "ResourceManager.h"
 
 
+const glm::vec2 Board::PLAYER_BOARD_POSITION = glm::vec2(600.0f, 0.0f);
+const glm::vec2 Board::RADAR_BOARD_POSITION = glm::vec2(0.0f, 0.0f);
+const glm::vec2 Board::SIZE = glm::vec2(600.0f, 600.0f);
 
-Board::Board() {
+//TODO: THIS CONSTRUCTOR IS A FUCKING MESS 
+Board::Board(Type type) : Entity(type == Type::PLAYER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::PLAYER ? "grid" : "radar")) {
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
 	for (int row = 0; row < BOARD_WIDTH; row++) {
@@ -78,18 +83,6 @@ std::vector<Square> Board::occupiedSquares() {
 	return result;
 }
 
-void Board::draw() {
-	//Renderer::render(gridTexture);
-	//for (auto square : guessedSquares) {
-	//	SDL_Rect dest = { square.col * 75, square.row * 75 , 75, 75 }; //AGAIN Y = ROW, X = COL. I KEEP WRITING THIS BECAUSE IT IS VERY COUNTER-INTUITIVE TO ME!!!!
-	//	if (square.occupied) {
-	//		Renderer::render(hitIconTexture, 0, &dest);
-	//	}
-	//	else {
-	//		Renderer::render(missIconTexture, 0, &dest);
-	//	}
-	//}
-}
 
 bool Board::guess(const std::pair<int, int> coord) {
 	Square& square = squares[coord.first][coord.second];
