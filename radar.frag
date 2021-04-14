@@ -18,23 +18,23 @@ float d2y(float d) {
 }
 
 float fct(vec2 p, float r) {
-    float a = 3.0 * mod(-atan(p.y, p.x) + time, 2.0 * PI);
+    float a = 2.5 * mod(-atan(p.y, p.x) + time, 2.0 * PI);
     return (d2y(a) + fillStrength) * (1.0 - step(radius, r));
 }
 
-float circle(vec2 p, float r) {
+float circle(float r) {
     float d = distance(r, radius);
     return d2y(100.0 * d);
 }
 
 
 void main(void) {
-    vec2 position = ((gl_FragCoord.xy) - 0.5 * resolution) / resolution.y;
-    position /= cos(1.5 * length(position));
+    vec2 position = ((gl_FragCoord.xy) - 0.5 * resolution) / resolution.y; //Get position reletive to center
+    position /= cos(1.5 * length(position)); //idk ?
     float y = 0.0;
-    float dc = length(position);
-    y += fct(position, dc);
-    y += circle(position, dc);
+    float dc = length(position); //distance from the center
+    y += fct(position, dc); //sweep effect
+    y += circle(dc); //circle
     y = pow(y, 1.0 / glowStrength );
     FragColor = vec4(sqrt(y) * color , 1.0) *  texture(image, TexCoord);;
 }
