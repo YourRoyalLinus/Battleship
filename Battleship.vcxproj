@@ -68,6 +68,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -97,8 +105,80 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="Square.cpp" />
+    <ClCompile Include="stb_configs.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Marker.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Ship.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="Square.h" />
+    <ClInclude Include="Texture2D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\Battleship.png" />
+    <Image Include="Textures\BattleshipChat.png" />
+    <Image Include="Textures\BattleshipGrid.png" />
+    <Image Include="Textures\BattleshipGuessBoard.png" />
+    <Image Include="Textures\Battleship_Hit.png" />
+    <Image Include="Textures\BattleShip_Miss.png" />
+    <Image Include="Textures\BattleShip_Radar_Hit.png" />
+    <Image Include="Textures\BattleShip_Radar_Miss.png" />
+    <Image Include="Textures\Carrier.png" />
+    <Image Include="Textures\Cruiser.png" />
+    <Image Include="Textures\Destroyer.png" />
+    <Image Include="Textures\GuessBoard2.png" />
+    <Image Include="Textures\Ship.png" />
+    <Image Include="Textures\Submarine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="PIXEARG_.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="radar.frag" />
+    <None Include="water_grid.frag" />
+    <None Include="basic_sprite.frag" />
+    <None Include="basic_sprite.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Battleship.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
