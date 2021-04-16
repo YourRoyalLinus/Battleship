@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
  
 class Shader

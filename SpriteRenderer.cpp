@@ -1,5 +1,5 @@
 #include "SpriteRenderer.h"
-#include <glm/ext.hpp>
+#include <ext.hpp>
 
 SpriteRenderer::SpriteRenderer(Shader &shader){
     this->shader = shader;

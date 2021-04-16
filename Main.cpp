@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <glad.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp>
 #include <SDL_image.h>
 #include "Board.h"
 #include "Player.h"
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 	Game game;
 	game.init();
 
-	while (game.state != Game::GameState::OVER) {
+	while (game.state != GameParams::State::OVER) {
 	
 		game.handleInput();
 		game.update();

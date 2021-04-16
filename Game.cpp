@@ -1,12 +1,12 @@
 #include "Game.h"
 #include "ResourceManager.h"
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp>
 #include <SDL.h>
 #include <chrono>
 #include "Marker.h"
 
-Game::Game() : state(GameState::SETUP), human(nullptr), computer(nullptr), playerBoard(nullptr), radarBoard(nullptr), humanTurn(true),
+Game::Game() : state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), player(nullptr), computer(nullptr),
 			   playerBoardRenderer(nullptr), spriteRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) { /*...*/ }
 
 void Game::init() {
@@ -53,12 +53,11 @@ void Game::init() {
     spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
 
-	playerBoard = new Board(Board::Type::PLAYER);
-	radarBoard = new Board(Board::Type::RADER);
-
-	human = new Player();
-	computer = new Player();
-
+	player = new Player();
+	ComputerFactory factory;
+	//TODO Allow player to change computer difficulty
+	Computer::Difficulty diff = Computer::Difficulty::MEDIUM;
+	computer = factory.InitComputer(diff);
 }
 
 void Game::handleInput() {
@@ -82,18 +81,18 @@ void Game::handleInput() {
 void Game::update() {
 	//Hotload shaders
 	updateShaders();
-	if (state == GameState::SETUP) {
+	if (state == GameParams::State::SETUP) {
 
-		if (humanTurn) {
+		if (turn == GameParams::Turn::PLAYER) {
 
-			if (human->ships.empty()) {
+			if (player->ships.empty()) {
 				//The player has placed all the ships
-				humanTurn = false;
+				turn = GameParams::Turn::COMPUTER;
 				return;
 			}
 
 
-			Ship& currentShipRef = human->ships.back();
+			Ship& currentShipRef = player->ships.back();
 
 			/* Clamp position to player board grid square */
 			int mouseXSquare = (mousePosX - SCREEN_WIDTH/2) / Board::SQUARE_PIXEL_SIZE;
@@ -104,9 +103,9 @@ void Game::update() {
 
 
 			if (leftClick) {
-				if (playerBoard->placeShip(currentShipRef, currentShipRef.coords)) {
-					human->ships.pop_back();
-					playerBoard->print();
+				if (player->board->placeShip(currentShipRef, currentShipRef.coords)) {
+					player->ships.pop_back();
+					player->board->print();
 					std::cout << "\n\n" << std::endl;
 				}
 				else { printf("You can't place a ship there!\n"); }
@@ -132,50 +131,52 @@ void Game::update() {
 				
 				computerShipRef.snapToPosition({ row, col });
 
-				if (radarBoard->placeShip(computerShipRef, computerShipRef.coords))
+				if (computer->board->placeShip(computerShipRef, computerShipRef.coords))
 					computer->ships.pop_back();
 			
 			}
 			//Computer is done placing all it's ships move on to next state.
-			state = GameState::PLAYING;
-			humanTurn = true;
+			state = GameParams::State::PLAYING;
+			turn = GameParams::Turn::PLAYER;
 
 		//	radarBoard->print();
 
 		}
 	}
-	else if(state == GameState::PLAYING){
-		if (humanTurn) {
+	else if(state == GameParams::State::PLAYING){
+		if (turn == GameParams::Turn::PLAYER) {
 			if (leftClick) {
 				/* Clamp position to player board grid square */
 				int mouseXSquare = (mousePosX) / Board::SQUARE_PIXEL_SIZE;
 				int mouseYSquare = (mousePosY) / Board::SQUARE_PIXEL_SIZE;
-				if (radarBoard->guess({ mouseYSquare, mouseXSquare }))
+				if (computer->board->guess({ mouseYSquare, mouseXSquare}, turn))
 					std::cout << "Player hit!" << std::endl;
-				humanTurn = false;
+				turn = GameParams::Turn::COMPUTER;
 				leftClick = false;
 			}
 		}
 		else {
-			int row = rand() % 8;
-			int col = rand() % 8;
-			if (playerBoard->guess({ row, col })) {
-				std::cout << "Computer hit!" << std::endl;
+			int numShips = player->board->activeShips.size();
+			std::pair<int, int> computerGuess = computer->GuessCoordinate();
+			computer->hitStreak = player->board->guess(computerGuess, turn);
+			if (numShips > player->board->activeShips.size()) {
+				computer->SankShip();
 			}
-			humanTurn = true;
+
+			turn = GameParams::Turn::PLAYER;
 		}
 
-		if (playerBoard->activeShips.empty()) {
+		if (player->board->activeShips.empty()) {
 			std::cout << "Computer Won!" << std::endl;
-			state = GameState::OVER;
+			state = GameParams::State::OVER;
 		}
-		else if (radarBoard->activeShips.empty()) {
+		else if (computer->board->activeShips.empty()) {
 			std::cout << "Plyaer Won!" << std::endl;
-			state = GameState::OVER;
+			state = GameParams::State::OVER;
 		}
 
 	}
-	else if (state == GameState::OVER) {
+	else if (state == GameParams::State::OVER) {
 		exit(0);
 	}
 
@@ -197,18 +198,18 @@ void Game::render() {
 	ResourceManager::getShader("radar2").use().setVec2("resolution", glm::vec2(600.0f, 600.0f));
 
 
-	radarBoard->draw(*radarBoardRenderer);
-	playerBoard->draw(*playerBoardRenderer);
+	computer->board->draw(*radarBoardRenderer);
+	player->board->draw(*playerBoardRenderer);
 
 	//draw placed ships on player's board
-	for (auto& ship : playerBoard->activeShips) {
+	for (auto& ship : player->board->activeShips) {
 		ship.draw(*spriteRenderer);
 	}
 
 	//draw placing ship if you are in setup
-	if (state == GameState::SETUP) {
-		if (!human->ships.empty())
-			shipToPlace = &(human->ships.back());
+	if (state == GameParams::State::SETUP) {
+		if (!player->ships.empty())
+			shipToPlace = &(player->ships.back());
 
 		//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
 		if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f)
@@ -217,7 +218,7 @@ void Game::render() {
 
 	//draw hit markers on board
 	//TODO: This is the worst code ever wtf am I doing
-	for (auto square : playerBoard->guessedSquares) {
+	for (auto square : player->board->guessedSquares) {
 		if (square.occupied) {
 			Marker hit(Marker::Type::HIT, glm::vec2(square.col * SQUARE_PIXEL_SIZE + SCREEN_WIDTH/2 , square.row * SQUARE_PIXEL_SIZE));
 			hit.draw(*spriteRenderer);
@@ -228,7 +229,7 @@ void Game::render() {
 		}
 	}
 
-	for (auto square : radarBoard->guessedSquares) {
+	for (auto square : computer->board->guessedSquares) {
 		if (square.occupied) {
 			Marker hit(Marker::Type::HIT, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
 			hit.draw(*spriteRenderer);

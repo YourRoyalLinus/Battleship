@@ -1,6 +1,6 @@
 #pragma once
 #include "Player.h"
-#include "Board.h"
+#include "ComputerFactory.h"
 #include "SpriteRenderer.h"
 class Game
 {
@@ -13,23 +13,16 @@ public:
 	static const int SQUARE_PIXEL_HEIGHT = 75;
 
 
-	enum class GameState {
-		SETUP,
-		PLAYING,
-		OVER
-	};
-
-	GameState state;
-	Player* human;
-	Player* computer;
-	Board* playerBoard;
-	Board* radarBoard;
+	GameParams::State state;
+	GameParams::Turn turn;
+	Player* player;
+	Computer* computer;
+	//Board* playerBoard;
+	//Board* radarBoard;
 
 	SpriteRenderer* playerBoardRenderer;
 	SpriteRenderer* spriteRenderer;
 	SpriteRenderer* radarBoardRenderer;
-
-	bool humanTurn;
 
 	Game();
 

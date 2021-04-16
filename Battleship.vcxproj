@@ -69,12 +69,12 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\SDL2_ttf-2.0.15\include;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jon\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\Jon\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\David\vclib\stb-master;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\SDL2_ttf-2.0.15\include;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\David\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\David\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\SDL2_ttf-2.0.15\include;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jon\vclib\SDL2_ttf-2.0.15\lib\x64;C:\Users\Jon\vclib\SDL2_image-2.0.5\lib\x64;C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,6 +112,7 @@
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Jon\vclib\glm\glm;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\stb-master;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +125,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="..\..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="Computer.cpp" />
+    <ClCompile Include="ComputerFactory.cpp" />
+    <ClCompile Include="EasyComputer.cpp" />
+    <ClCompile Include="HardComputer.cpp" />
+    <ClCompile Include="MediumComputer.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -139,6 +145,12 @@
     <ClCompile Include="Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Computer.h" />
+    <ClInclude Include="ComputerFactory.h" />
+    <ClInclude Include="EasyComputer.h" />
+    <ClInclude Include="GameParams.h" />
+    <ClInclude Include="HardComputer.h" />
+    <ClInclude Include="MediumComputer.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
