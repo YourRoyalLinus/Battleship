@@ -1,3 +1,4 @@
+#pragma once
 #include "HardComputer.h"
 
 HardComputer::HardComputer(const Difficulty& d) {

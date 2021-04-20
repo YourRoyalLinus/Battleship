@@ -1,3 +1,4 @@
+#pragma once
 #include "EasyComputer.h"
 
 EasyComputer::EasyComputer(const Difficulty& d) {

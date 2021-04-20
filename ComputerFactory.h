@@ -1,5 +1,6 @@
 #pragma once
 #include "Computer.h"
+
 class ComputerFactory
 {
 	public:

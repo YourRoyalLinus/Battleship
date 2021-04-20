@@ -1,13 +1,14 @@
-#include "Game.h"
-#include "ResourceManager.h"
+#pragma once
+#include <chrono>
 #include <glm.hpp>
 #include <ext.hpp>
 #include <SDL.h>
-#include <chrono>
+#include "ResourceManager.h"
 #include "Marker.h"
+#include "Game.h"
 
 Game::Game() : state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), player(nullptr), computer(nullptr),
-			   playerBoardRenderer(nullptr), spriteRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) { /*...*/ }
+			   playerBoardRenderer(nullptr), spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) { /*...*/ }
 
 void Game::init() {
 	ResourceManager::loadShader("basic_sprite.vert", "water_grid.frag", "water_grid");

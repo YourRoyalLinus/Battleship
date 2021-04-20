@@ -1,3 +1,4 @@
+#pragma once
 #include "MediumComputer.h"
 
 MediumComputer::MediumComputer(const Difficulty& d) {

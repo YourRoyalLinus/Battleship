@@ -1,5 +1,6 @@
 #pragma once
 #include "Computer.h"
+
 class HardComputer : public Computer
 {
 	public:

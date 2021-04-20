@@ -1,22 +1,18 @@
-#include <SDL.h>
-#include <glad.h>
-#include <glm.hpp>
-#include <ext.hpp>
-#include <SDL_image.h>
-#include "Board.h"
-#include "Player.h"
+#pragma once
 #include <algorithm>
 #include <ctime>
+//#include <SDL_opengl.h>
+#include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <SDL_opengl.h>
-#include "Shader.h"
 #include <stb_image.h>
 #include "Texture2D.h"
 #include "ResourceManager.h"
 #include "SpriteRenderer.h"
-#include <chrono>
+#include "Board.h"
+#include "Player.h"
 #include "Ship.h"
 #include "Game.h"
+#include "Shader.h"
 
 //TODOS:
 //CLEAN UP BOARD CONSTRUCTOR
@@ -26,7 +22,7 @@
 //Make it so if hotloaded shader failed to compile, old shader is used.
 //MAKE NAMING CONSISTENT FOR EVERYTHING.
 //CLEAN UP MEMORY CORRECTLY
-//PUT CONSTANT VALUES IN ONE PLACE & WHERE THEY SHOULD BE
+//PUT CONSTANT VALUES IN ONE PLACE & WHERE THEY SHOULD BE (Config file we initialize when game starts?)
 //GENERAL REFACTORING / CLEANUP / ABSTRACTING 
 
 

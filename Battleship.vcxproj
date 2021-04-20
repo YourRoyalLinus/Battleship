@@ -125,8 +125,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\vclib\glad\src\glad.c" />
-    <ClCompile Include="Computer.cpp" />
+    <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
     <ClCompile Include="ComputerFactory.cpp" />
     <ClCompile Include="EasyComputer.cpp" />
     <ClCompile Include="HardComputer.cpp" />
@@ -135,7 +134,6 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />

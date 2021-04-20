@@ -1,3 +1,4 @@
+#pragma once
 #include "Entity.h"
 
 //Default Entity is positioned at origin with unit size and no texture.

@@ -1,8 +1,7 @@
 #pragma once
+#include <limits>
 #include "Texture2D.h"
 #include "Shader.h"
-#include <glm.hpp>
-#include <limits>
 
 class SpriteRenderer
 {

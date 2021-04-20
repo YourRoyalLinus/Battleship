@@ -1,6 +1,7 @@
-#include "Board.h"
+#pragma once
 #include <algorithm>
 #include "ResourceManager.h"
+#include "Board.h"
 
 
 const glm::vec2 Board::PLAYER_BOARD_POSITION = glm::vec2(600.0f, 0.0f);
