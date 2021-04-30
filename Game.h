@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Board.h"
 #include "SpriteRenderer.h"
+#include "ParticleEmitter.h"
 class Game
 {
 public:
@@ -29,14 +30,16 @@ public:
 	SpriteRenderer* spriteRenderer;
 	SpriteRenderer* radarBoardRenderer;
 
+	ParticleEmitter* particleEmitter;
+
 	bool humanTurn;
 
 	Game();
 
 	void init();
 	void handleInput();
-	void update();
-	void render();
+	void update(float dt);
+	void render(float dt);
 
 
 private:

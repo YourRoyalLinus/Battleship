@@ -10,11 +10,11 @@ Game::Game() : state(GameState::SETUP), human(nullptr), computer(nullptr), playe
 			   playerBoardRenderer(nullptr), spriteRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) { /*...*/ }
 
 void Game::init() {
+
 	ResourceManager::loadShader("basic_sprite.vert", "water_grid.frag", "water_grid");
 	ResourceManager::loadShader("basic_sprite.vert", "basic_sprite.frag", "basic_sprite");
-
-	//Testing radar effect 
 	ResourceManager::loadShader("basic_sprite.vert", "radar.frag", "radar2");
+	ResourceManager::loadShader("particle.vert", "particle.frag", "particle");
 
 	//Create Orthographic Projection Matrix
 	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
@@ -23,6 +23,8 @@ void Game::init() {
 	ResourceManager::getShader("water_grid").setMat4("projection", projection);
 	ResourceManager::getShader("basic_sprite").use().setInt("image", 0);
 	ResourceManager::getShader("basic_sprite").setMat4("projection", projection);
+	ResourceManager::getShader("particle").use().setInt("image", 0);
+	ResourceManager::getShader("particle").setMat4("projection", projection);
 
 	//radar test
 	ResourceManager::getShader("radar2").use().setInt("image", 0);
@@ -32,7 +34,7 @@ void Game::init() {
 	//Load Textures
 
 	// --grids--
-	ResourceManager::loadTexture("Textures\\BattleshipGrid.png", true, "grid");
+	ResourceManager::loadTexture("Textures\\WaterGrid2.png", true, "grid");
 	ResourceManager::loadTexture("Textures\\GuessBoard2.png", true, "radar");
 	// --ships--
 	ResourceManager::loadTexture("Textures\\Destroyer2.png", true, "destroyer");
@@ -46,9 +48,13 @@ void Game::init() {
 	//ResourceManager::loadTexture("Textures\\BattleShip_Radar_Hit.png", false, "radar_hit");
 	ResourceManager::loadTexture("Textures\\BattleShip_Miss.png", true, "miss");
 	ResourceManager::loadTexture("Textures\\BattleShip_Hit.png", true, "hit");
+	//particles
+	ResourceManager::loadTexture("Textures\\fireparticle.png", true, "fire");
 
 
 
+	
+	particleEmitter = new ParticleEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("fire"), 500, glm::vec4(0.6,0.2,0.0,0.3), glm::vec4(.8,0.0,0.0,0.2));
 	playerBoardRenderer = new SpriteRenderer(ResourceManager::getShader("water_grid"));
     spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
@@ -79,7 +85,7 @@ void Game::handleInput() {
 	}
 }
 
-void Game::update() {
+void Game::update(float dt) {
 	//Hotload shaders
 	updateShaders();
 	if (state == GameState::SETUP) {
@@ -165,6 +171,8 @@ void Game::update() {
 			humanTurn = true;
 		}
 
+		
+
 		if (playerBoard->activeShips.empty()) {
 			std::cout << "Computer Won!" << std::endl;
 			state = GameState::OVER;
@@ -179,9 +187,12 @@ void Game::update() {
 		exit(0);
 	}
 
+	//update particles.
+
+
 }
 
-void Game::render() {
+void Game::render(float dt) {
 	//update uniforms
 	ResourceManager::getShader("water_grid").use().setFloat("iTime", mticks());
 	//draw boards
@@ -211,8 +222,13 @@ void Game::render() {
 			shipToPlace = &(human->ships.back());
 
 		//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
-		if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f)
+		if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f) {
 			shipToPlace->draw(*spriteRenderer);
+			//updateParticles
+			particleEmitter->update(dt, *shipToPlace, 3, glm::vec2(35));
+			particleEmitter->draw();
+			
+		}
 	}
 
 	//draw hit markers on board
