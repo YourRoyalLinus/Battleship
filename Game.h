@@ -3,6 +3,7 @@
 #include "Board.h"
 #include "SpriteRenderer.h"
 #include "ParticleEmitter.h"
+#include "PostProcessor.h"
 class Game
 {
 public:
@@ -26,11 +27,17 @@ public:
 	Board* playerBoard;
 	Board* radarBoard;
 
-	SpriteRenderer* playerBoardRenderer;
+	Entity* grid;
+	
+	SpriteRenderer* waterRenderer;
 	SpriteRenderer* spriteRenderer;
 	SpriteRenderer* radarBoardRenderer;
+	SpriteRenderer* gridRenderer;
+	SpriteRenderer* shipRenderer;
+	
+	PostProcessor* effects;
 
-	ParticleEmitter* particleEmitter;
+	
 
 	bool humanTurn;
 
@@ -46,11 +53,19 @@ private:
 	void updateShaders();
 	//Returns seconds since epoch as float. Used to set uniforms.
 	float mticks();
+
+	void renderRadarPings();
 	//Input events we care about.
 	int mousePosX, mousePosY;
 	bool leftClick, rightClick;
 	//Ship the palyer is placing;
 	Ship* shipToPlace;
+
+	//TODO: move this to a more sensible place.
+	float shakeTime = 0.0f;
+
+	std::vector<ParticleEmitter> fireEmitters;
+	std::vector<ParticleEmitter> smokeEmitters;
 
 
 

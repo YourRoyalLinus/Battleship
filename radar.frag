@@ -11,7 +11,9 @@ uniform float radius;
 uniform vec2 resolution;
 uniform float glowStrength;
 uniform vec3 color;
+
 uniform sampler2D image;
+uniform sampler2D pings;
 
 float d2y(float d) {
     return 1. / (0.2 + d);
@@ -36,5 +38,7 @@ void main(void) {
     y += fct(position, dc); //sweep effect
     y += circle(dc); //circle
     y = pow(y, 1.0 / glowStrength );
-    FragColor = vec4(sqrt(y) * color , 1.0) *  texture(image, TexCoord);;
+
+    vec4 pings = texture(pings, vec2(TexCoord.x, -TexCoord.y));
+    FragColor = vec4(sqrt(y) * color , 1.0) * (texture(image,TexCoord) + (sqrt(y) * pings));
 }
