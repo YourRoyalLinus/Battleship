@@ -28,7 +28,6 @@ public:
 	/* Try to place a piece. Return whether or not it was a valid placement */
 	bool Board::placeShip(Ship& ship, std::vector<std::pair<int, int>> coords);
 
-	std::vector<Square> occupiedSquares();
 	void print();
 
 	/* Guess at where opponent's ship is placed. Return if hit or miss*/
@@ -40,12 +39,21 @@ public:
 	/* A collection of squares which have been guessed for this board */
 	std::vector<Square> guessedSquares;
 
+	void Board::draw(SpriteRenderer& spriteRenderer) override;
+
+	bool squareOccupied(std::pair<int, int> square) {
+		return squares[square.first][square.second].occupied;
+	}
 
 
 	~Board();
 
 
 protected:
+
+	Type type;
+
+	Texture2D waveMap;
 
 	/* Deal damage to the ship at the current square */
 	void damageHitShip(std::pair<int, int> coord);

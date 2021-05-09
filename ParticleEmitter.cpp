@@ -1,18 +1,22 @@
 #include "ParticleEmitter.h"
 #include <algorithm>
 #include <cmath>
+#include <random>
+#include <chrono>
+#include "Game.h"
 
-ParticleEmitter::ParticleEmitter(Shader shader, Texture2D texture, unsigned int amount, glm::vec4 startColor, glm::vec4 endColor) :
-	shader(shader), texture(texture), amountOfParticles(amount), startColor(startColor), endColor(endColor){
+ParticleEmitter::ParticleEmitter(Shader shader, Texture2D texture, unsigned int amount, glm::vec2 square, glm::vec4 startColor, glm::vec4 endColor, unsigned int glBlendSrc, unsigned int glBlendDst) :
+	shader(shader), texture(texture), amountOfParticles(amount), emmiterSquare(square), emmiterPosition(glm::vec2(square.y * Game::SQUARE_PIXEL_SIZE + 600, square.x * Game::SQUARE_PIXEL_SIZE)), 
+		startColor(startColor), endColor(endColor), glBlendSrc(glBlendSrc), glBlendDst(glBlendDst){
 	this->init();
 }
 
-void ParticleEmitter::update(float dt, Entity& entity, unsigned int numNewParticles, glm::vec2 offset) {
+void ParticleEmitter::update(float dt, unsigned int numNewParticles, glm::vec2 offset) {
 
 	//add new particles
 	for (unsigned int i = 0; i < numNewParticles; i++) {
 		int unusedParticleIndex = this->firstUnusedParticle();
-		this->respawnParticle(this->particles[unusedParticleIndex], entity, offset);
+		this->respawnParticle(this->particles[unusedParticleIndex], offset);
 	}
 
 	//update all particle positions, lifetimes and colors
@@ -28,8 +32,8 @@ void ParticleEmitter::update(float dt, Entity& entity, unsigned int numNewPartic
 }
 
 void ParticleEmitter::draw() {
-	//additive blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//ablending
+	glBlendFunc(this->glBlendSrc, this->glBlendDst);
 	this->shader.use();
 	for (auto particle : this->particles) {
 		if (particle.life > 0.0f) {
@@ -103,10 +107,17 @@ unsigned int ParticleEmitter::firstUnusedParticle() {
 
 }
 
-void ParticleEmitter::respawnParticle(Particle& particle, Entity& entity, glm::vec2 offset) {
-	float randomX = (20 - (rand() % 60));
-	float randomY = (20 - (rand() % 60));
-	particle.position = glm::vec2(entity.position.x + randomX, entity.position.y + randomY) + offset;
+void ParticleEmitter::respawnParticle(Particle& particle, glm::vec2 offset) {
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	//TODO add more options for different statistical distributions? Idk anything about stats
+	std::default_random_engine generator(seed);
+	std::normal_distribution<double> distribution(0, 8);
+	float randomX = distribution(generator);
+	float randomY = distribution(generator);
+	if (randomY > 5) {
+		randomY = 5;
+	}
+	particle.position = glm::vec2(emmiterPosition.x + randomX, emmiterPosition.y + randomY) + offset;
 	particle.color = this->startColor;
 	particle.life = 1.0f;
 }

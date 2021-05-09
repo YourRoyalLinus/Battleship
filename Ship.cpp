@@ -3,9 +3,13 @@
 #include <utility>
 #include "Board.h"
 #include "ResourceManager.h"
+#include <glm/glm.hpp>
 
 
 Ship::Ship(Type type): type(type), length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0) {
+	std::string shipName = sprites[type];
+	if(shipName == "destroyer")
+		normalMap = ResourceManager::getTexture(shipName + "NormalMap");
 	sprite = ResourceManager::getTexture(sprites[type]);
 	size = glm::vec2(length * Board::SQUARE_PIXEL_SIZE, Board::SQUARE_PIXEL_SIZE);
 	for (int i = 0; i <= length; i++) {
@@ -67,6 +71,7 @@ void Ship::rotate() {
 
 }
 
+
 void Ship::draw(SpriteRenderer& renderer) {
 	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2));
 }
@@ -91,4 +96,5 @@ std::pair<int, int> Ship::vectorMatrixProduct2(std::pair<int, int> vec, std::pai
 	result.second = dotPoduct2(mat.second, vec);
 	return result;
 }
+
 	

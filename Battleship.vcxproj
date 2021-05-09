@@ -168,17 +168,17 @@
     <Image Include="Textures\Destroyer.png" />
     <Image Include="Textures\fireparticle.png" />
     <Image Include="Textures\GuessBoard2.png" />
-    <Image Include="Textures\Ship.png" />
     <Image Include="Textures\Submarine.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="PIXEARG_.TTF" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="grid.frag" />
     <None Include="particle.frag" />
     <None Include="particle.vert" />
     <None Include="radar.frag" />
-    <None Include="water_grid.frag" />
+    <None Include="water.frag" />
     <None Include="basic_sprite.frag" />
     <None Include="basic_sprite.vert" />
   </ItemGroup>

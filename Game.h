@@ -26,11 +26,14 @@ public:
 	Board* playerBoard;
 	Board* radarBoard;
 
-	SpriteRenderer* playerBoardRenderer;
+	Entity* grid;
+	
+	SpriteRenderer* waterRenderer;
 	SpriteRenderer* spriteRenderer;
 	SpriteRenderer* radarBoardRenderer;
-
-	ParticleEmitter* particleEmitter;
+	SpriteRenderer* gridRenderer;
+	
+	ParticleEmitter* fireEmitter, *smokeEmitter;
 
 	bool humanTurn;
 
@@ -51,6 +54,9 @@ private:
 	bool leftClick, rightClick;
 	//Ship the palyer is placing;
 	Ship* shipToPlace;
+
+	std::vector<ParticleEmitter> fireEmitters;
+	std::vector<ParticleEmitter> smokeEmitters;
 
 
 

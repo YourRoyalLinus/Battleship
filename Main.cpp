@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
 			game.update(deltaTime);
 
 			//render
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			game.render(deltaTime);
@@ -139,8 +139,6 @@ int main(int argc, char* argv[]) {
 		float framEnd = ticks();
 		deltaTime += framEnd - frameStart;
 		frameStart = framEnd;
-		std::cout << deltaTime << std::endl;
-
 	}
 	
 	teardown();

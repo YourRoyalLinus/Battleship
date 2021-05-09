@@ -148,9 +148,6 @@
     <Image Include="Textures\Destroyer.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\Ship.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="Textures\Submarine.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
@@ -167,9 +164,6 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <None Include="water_grid.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="basic_sprite.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
@@ -183,6 +177,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="particle.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="water.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="grid.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
