@@ -73,7 +73,9 @@ void Ship::rotate() {
 
 
 void Ship::draw(SpriteRenderer& renderer) {
-	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2));
+	//TODO: Code is trash! I'm passing the water texture when drawing the ship so that the ships get brightened by the same gradient that the water does!
+	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2),
+		ResourceManager::getTexture("sunGradient"));
 }
 
 

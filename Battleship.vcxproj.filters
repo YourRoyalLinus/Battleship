@@ -72,6 +72,9 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -183,6 +189,15 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="grid.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="postprocessing.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="postprocessing.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ship.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

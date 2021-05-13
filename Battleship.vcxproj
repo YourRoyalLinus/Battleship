@@ -131,6 +131,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Marker.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
@@ -177,7 +179,10 @@
     <None Include="grid.frag" />
     <None Include="particle.frag" />
     <None Include="particle.vert" />
+    <None Include="postprocessing.frag" />
+    <None Include="postprocessing.vert" />
     <None Include="radar.frag" />
+    <None Include="ship.frag" />
     <None Include="water.frag" />
     <None Include="basic_sprite.frag" />
     <None Include="basic_sprite.vert" />

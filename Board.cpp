@@ -13,6 +13,9 @@ Board::Board(Type type) : type(type), Entity(type == Type::PLAYER ? PLAYER_BOARD
 	if (type == Type::PLAYER) {
 		waveMap = ResourceManager::getTexture("waveMap");
 	}
+	else if (type == Type::RADER) {
+		waveMap = ResourceManager::getTexture("pings");
+	}
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
 	for (int row = 0; row < BOARD_WIDTH; row++) {
