@@ -1,5 +1,6 @@
-#include "Shader.h"
+#pragma once
 #include <sstream>
+#include "Shader.h"
 
 Shader &Shader::use()
 {

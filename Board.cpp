@@ -1,6 +1,7 @@
-#include "Board.h"
+#pragma once
 #include <algorithm>
 #include "ResourceManager.h"
+#include "Board.h"
 
 
 const glm::vec2 Board::PLAYER_BOARD_POSITION = glm::vec2(600.0f, 0.0f);
@@ -84,22 +85,42 @@ std::vector<Square> Board::occupiedSquares() {
 }
 
 
-bool Board::guess(const std::pair<int, int> coord) {
+bool Board::guess(const std::pair<int, int> coord, GameParams::Turn turn) {
 	Square& square = squares[coord.first][coord.second];
 	bool hit = validCoord(coord) && square.occupied;
 	//TODO this is really ugly and can probably be done a better way! Should the board even be doing this?
 	if (hit) {
-		damageHitShip(coord);
+		damageHitShip(coord, turn);
 	}
 	guessedSquares.push_back(square);
 	return hit;
+}
+
+bool Board::alreadyGuessedSquare(const std::pair<int, int> coord) {
+	for (auto sq : guessedSquares) {
+		if (sq.row == coord.first && sq.col == coord.second) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Board::markSquare(const std::pair<int, int> coord, bool prevRes) {
+	Square& sq = squares[coord.first][coord.second];
+	if (prevRes) {
+		sq.occupied = true;
+	}
+	else {
+		sq.occupied = false;
+	}
+	guessedSquares.push_back(sq);
 }
 
 bool Board::validCoord(const std::pair<int, int> coord) {
 	return coord.first < BOARD_WIDTH && coord.second < BOARD_HEIGHT && coord.first >= 0 && coord.second >= 0;
 }
 
-void Board::damageHitShip(std::pair<int,int> coord) {
+void Board::damageHitShip(std::pair<int,int> coord, GameParams::Turn turn) {
 	for (auto start = activeShips.begin(); start != activeShips.end(); start++) {
 		Ship& ship = *start;
 		auto hitSquare = std::find(ship.coords.begin(), ship.coords.end(), coord);
@@ -107,12 +128,46 @@ void Board::damageHitShip(std::pair<int,int> coord) {
 		{
 			start->hitsTaken++;
 			if (ship.sunk()) {
+				damageSankShip(ship, turn);
 				activeShips.erase(start);
-				std::cout <<"Ship sunk!" << std::endl;
 				break;
 			}
 		}
 	}
+}
+
+void Board::damageSankShip(Ship ship, GameParams::Turn turn) {
+	std::string shipType;
+	std::string sinker;
+	std::string sinkee;
+
+	switch (ship.type) {
+	case Ship::Type::BATTLESHIP:
+		shipType = "BattleShip";
+		break;
+	case Ship::Type::CARRIER:
+		shipType = "Carrier";
+		break;
+	case Ship::Type::CRUISER:
+		shipType = "Cruiser";
+		break;
+	case Ship::Type::DESTROYER:
+		shipType = "Destroyer";
+		break;
+	case Ship::Type::SUBMARINE:
+		shipType = "Submarine";
+		break;
+	}
+	if (turn == GameParams::Turn::PLAYER) {
+		sinker = "Player";
+		sinkee = "Opponent";
+	}
+	else {
+		sinker = "Opponent";
+		sinkee = "Player";
+	}
+
+	std::cout << sinker << " has sunk " << sinkee << "'s " << shipType << "!" << std::endl;
 }
 
 Board::~Board() {

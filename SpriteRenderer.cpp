@@ -1,5 +1,7 @@
+#pragma once
+#include <ext.hpp>
 #include "SpriteRenderer.h"
-#include <glm/ext.hpp>
+
 
 SpriteRenderer::SpriteRenderer(Shader &shader){
     this->shader = shader;

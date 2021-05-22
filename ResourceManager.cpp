@@ -1,6 +1,7 @@
-#include "ResourceManager.h"
+#pragma once
 #include <sstream>
 #include <stb_image.h>
+#include "ResourceManager.h"
 
 //init static members
 std::map<std::string, Texture2D> ResourceManager::textures;

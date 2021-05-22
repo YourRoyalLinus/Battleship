@@ -1,56 +1,56 @@
 #pragma once
-#include "Player.h"
-#include "Board.h"
+#include "PeerNetwork.h"
+#include "ConnectingPeer.h"
+#include "HostingPeer.h"
 #include "SpriteRenderer.h"
+#include "Player.h"
+#include "ComputerFactory.h"
+
+
 class Game
 {
-public:
-	static const int SCREEN_WIDTH = 1200;
-	static const int SCREEN_HEIGHT = 600;
+	public:
+		static const int SCREEN_WIDTH = 1200;
+		static const int SCREEN_HEIGHT = 600;
 
 
-	static const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
-	static const int SQUARE_PIXEL_HEIGHT = 75;
+		static const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
+		static const int SQUARE_PIXEL_HEIGHT = 75;
 
+		PeerNetwork* net;
+		GameParams::State state;
+		GameParams::Turn turn;
+		GameParams::Mode mode;
+		Player* player;
+		Opponent* opponent;
 
-	enum class GameState {
-		SETUP,
-		PLAYING,
-		OVER
-	};
+		SpriteRenderer* playerBoardRenderer;
+		SpriteRenderer* spriteRenderer;
+		SpriteRenderer* radarBoardRenderer;
 
-	GameState state;
-	Player* human;
-	Player* computer;
-	Board* playerBoard;
-	Board* radarBoard;
+		Game(Computer::Difficulty compDiff);
+		Game(PeerNetwork* network);
+		Game();
+		~Game();
 
-	SpriteRenderer* playerBoardRenderer;
-	SpriteRenderer* spriteRenderer;
-	SpriteRenderer* radarBoardRenderer;
+		void init();
+		void handleInput();
+		void update();
+		void render();
 
-	bool humanTurn;
+		void changeDifficulty(Computer::Difficulty compDiff);
+		//Static functions to load game?
+		// PLACEHOLDER
+		// PLACEHOLDER
 
-	Game();
-
-	void init();
-	void handleInput();
-	void update();
-	void render();
-
-
-private:
-	void updateShaders();
-	//Returns seconds since epoch as float. Used to set uniforms.
-	float mticks();
-	//Input events we care about.
-	int mousePosX, mousePosY;
-	bool leftClick, rightClick;
-	//Ship the palyer is placing;
-	Ship* shipToPlace;
-
-
-
-
+	private:
+		void updateShaders();
+		//Returns seconds since epoch as float. Used to set uniforms.
+		float mticks();
+		//Input events we care about.
+		int mousePosX, mousePosY;
+		bool leftClick, rightClick;
+		//Ship the palyer is placing;
+		Ship* shipToPlace;
 };
 

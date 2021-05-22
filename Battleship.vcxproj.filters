@@ -9,24 +9,24 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{4b2fee48-c8e6-43e1-a9ae-eacefcef8233}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Font">
-      <UniqueIdentifier>{596cc1bb-7ce5-4357-a162-7798d09d48d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\glad">
       <UniqueIdentifier>{b7ae8d7e-8226-47e5-a2e8-4d9abac8e677}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{26a1a9ac-7c86-423e-8479-0e47d3e06bfc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\stb">
       <UniqueIdentifier>{0f7b6542-0d0d-4e62-8ea7-c68fc219e639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Resource Files\Textures">
+      <UniqueIdentifier>{4b2fee48-c8e6-43e1-a9ae-eacefcef8233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource Files\Font">
+      <UniqueIdentifier>{596cc1bb-7ce5-4357-a162-7798d09d48d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource Files\Shaders">
+      <UniqueIdentifier>{26a1a9ac-7c86-423e-8479-0e47d3e06bfc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -41,12 +41,6 @@
     </ClCompile>
     <ClCompile Include="Ship.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\vclib\glad\src\glad.c">
-      <Filter>Source Files\glad</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
@@ -67,6 +61,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputerFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyComputer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HardComputer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediumComputer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vclib\glad\src\glad.c">
+      <Filter>Source Files\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectingPeer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HostingPeer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PeerNetwork.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,73 +125,109 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Computer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputerFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyComputer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HardComputer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediumComputer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectingPeer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HostingPeer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Peer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PeerNetwork.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Opponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Battleship.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Battleship_Hit.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleShip_Miss.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleShip_Radar_Hit.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleShip_Radar_Miss.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleshipChat.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleshipGrid.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\BattleshipGuessBoard.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Carrier.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Cruiser.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Destroyer.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Ship.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\Submarine.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\GuessBoard2.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="PIXEARG_.TTF">
-      <Filter>Resource Files\Font</Filter>
+      <Filter>Header Files\Resource Files\Font</Filter>
     </Font>
   </ItemGroup>
   <ItemGroup>
     <None Include="water_grid.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="basic_sprite.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="basic_sprite.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="radar.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Battleship.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
