@@ -194,7 +194,7 @@ void Game::update(float dt) {
 				//Computer hit a player's ship. Draw fire effects and configure screen shake post processing effect.
 				glm::vec2 squarePostion = glm::vec2(row, col);
 				ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 1000, squarePostion, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
-				ParticleEmitter smokeEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 100, squarePostion, glm::vec4(0.2,0.2,0.2,0.05), glm::vec4(0.0,0.0,0.0,0.0),
+				ParticleEmitter smokeEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 300, squarePostion, glm::vec4(0.2,0.2,0.2,0.05), glm::vec4(0.0,0.0,0.0,0.0),
 				GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				fireEmitters.push_back(fireEmitter);
 				smokeEmitters.push_back(smokeEmitter);
@@ -245,7 +245,7 @@ void Game::update(float dt) {
 		fireEmitter->update(dt, 8, glm::vec2(35.0f));
 	}
 	for (auto& smokeEmitter : smokeEmitters) {
-		smokeEmitter.update(dt, 1, glm::vec2(35.0f, 15.0f));
+		smokeEmitter.update(dt, 3, glm::vec2(35.0f, 15.0f));
 	}
 
 	//update postprocessing effects
