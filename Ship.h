@@ -6,6 +6,7 @@
 #include <string>
 #include <SDL_image.h>
 #include "Entity.h"
+#include "ParticleEmitter.h"
 
 
 class Ship : public Entity {
@@ -47,12 +48,18 @@ class Ship : public Entity {
 		std::vector<std::pair<int, int>> coords;
 		int hitsTaken;
 
-	private:
-		int length;
-		Orientation orientation;
-		std::vector<std::pair<int, int>> getCoordsRelativeToPivot(std::pair<int,int> pivot);
-		int dotPoduct2(std::pair<int, int> vec1, std::pair<int, int> vec2);
-		std::pair<int, int> vectorMatrixProduct2(std::pair<int, int> vec, std::pair<std::pair<int, int>, std::pair<int, int>> mat);
+private:
+	Texture2D normalMap;
+
+	int length;
+	Orientation orientation;
+
+	std::vector<ParticleEmitter> fireEmitters;
+	std::vector<ParticleEmitter> smokeEmitters;
+
+	std::vector<std::pair<int, int>> getCoordsRelativeToPivot(std::pair<int,int> pivot);
+	int dotPoduct2(std::pair<int, int> vec1, std::pair<int, int> vec2);
+	std::pair<int, int> vectorMatrixProduct2(std::pair<int, int> vec, std::pair<std::pair<int, int>, std::pair<int, int>> mat);
 	
 };
 

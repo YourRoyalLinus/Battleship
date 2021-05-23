@@ -30,9 +30,11 @@ Shader ResourceManager::getShader(std::string name)
     return shaders[name];
 }
 
-Texture2D ResourceManager::loadTexture(const char *file, bool alpha, std::string name)
+Texture2D ResourceManager::loadTexture(const char* file, unsigned int internalFormat, unsigned int imageFormat, std::string name)
 {
-    textures[name] = loadTextureFromFile(file, alpha);
+    //NOTE: I have to do this stupid BS because OpenGL formats are weird
+    textures[name] = loadTextureFromFile(file, internalFormat, imageFormat);
+    
     return textures[name];
 }
 
@@ -93,15 +95,14 @@ Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *
 
 }
 
-Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
+Texture2D ResourceManager::loadTextureFromFile(const char* file, unsigned int internalFormat, unsigned int imageFormat)
 {
     //Create texture object
     Texture2D texture;
     //I'm assuming images are RGBA by default, if they aren't change that!
-    if (!alpha){
-        texture.internalFormat = GL_RGB;
-        texture.imageFormat = GL_RGB;
-    }
+    texture.internalFormat = internalFormat;
+    texture.imageFormat = imageFormat;
+    
     //Load image
     int width, height, nrChannels;
     unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);

@@ -92,6 +92,19 @@ void init() {
 	glViewport(0, 0, WIDTH, HEIGHT);
 }
 
+float ticks()
+{
+    typedef std::chrono::high_resolution_clock clock;
+    typedef std::chrono::duration<float, std::milli> duration;
+
+    static clock::time_point start = clock::now();
+    duration elapsed = clock::now() - start;
+    return elapsed.count() / 1000.0;
+}
+
+const int FRAME_RATE = 60;
+const int FRAMETIME = 1000 / FRAME_RATE;
+
 int main(int argc, char* argv[]) {
 
 	//This is how I'm doing RNG for now!
@@ -211,8 +224,13 @@ int main(int argc, char* argv[]) {
 
 		game->render();
 
-		SDL_GL_SwapWindow(window);
+			SDL_GL_SwapWindow(window);
+			deltaTime = 0;
+		
 
+		float framEnd = ticks();
+		deltaTime += framEnd - frameStart;
+		frameStart = framEnd;
 	}
 	
 	teardown();

@@ -7,6 +7,8 @@
 #include "ComputerFactory.h"
 
 
+#include "ParticleEmitter.h"
+#include "PostProcessor.h"
 class Game
 {
 	public:
@@ -24,6 +26,27 @@ class Game
 		Player* player;
 		Opponent* opponent;
 
+	GameState state;
+	Player* human;
+	Player* computer;
+	Board* playerBoard;
+	Board* radarBoard;
+
+	Entity* grid;
+	
+	SpriteRenderer* waterRenderer;
+	SpriteRenderer* spriteRenderer;
+	SpriteRenderer* radarBoardRenderer;
+	SpriteRenderer* gridRenderer;
+	SpriteRenderer* shipRenderer;
+	
+	PostProcessor* effects;
+
+	
+
+	bool humanTurn;
+
+	Game();
 		SpriteRenderer* playerBoardRenderer;
 		SpriteRenderer* spriteRenderer;
 		SpriteRenderer* radarBoardRenderer;
@@ -33,24 +56,36 @@ class Game
 		Game();
 		~Game();
 
-		void init();
-		void handleInput();
-		void update();
-		void render();
+	void init();
+	void handleInput();
+	void update(float dt);
+	void render(float dt);
 
 		void changeDifficulty(Computer::Difficulty compDiff);
 		//Static functions to load game?
 		// PLACEHOLDER
 		// PLACEHOLDER
 
-	private:
-		void updateShaders();
-		//Returns seconds since epoch as float. Used to set uniforms.
-		float mticks();
-		//Input events we care about.
-		int mousePosX, mousePosY;
-		bool leftClick, rightClick;
-		//Ship the palyer is placing;
-		Ship* shipToPlace;
+private:
+	void updateShaders();
+	//Returns seconds since epoch as float. Used to set uniforms.
+	float mticks();
+
+	void renderRadarPings();
+	//Input events we care about.
+	int mousePosX, mousePosY;
+	bool leftClick, rightClick;
+	//Ship the palyer is placing;
+	Ship* shipToPlace;
+
+	//TODO: move this to a more sensible place.
+	float shakeTime = 0.0f;
+
+	std::vector<ParticleEmitter> fireEmitters;
+	std::vector<ParticleEmitter> smokeEmitters;
+
+
+
+
 };
 

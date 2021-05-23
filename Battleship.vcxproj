@@ -135,7 +135,10 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PeerNetwork.cpp" />
+    <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />
@@ -157,11 +160,9 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Marker.h" />
-    <ClInclude Include="Opponent.h" />
-    <ClInclude Include="Payload.h" />
-    <ClInclude Include="Peer.h" />
-    <ClInclude Include="PeerNetwork.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
@@ -183,16 +184,22 @@
     <Image Include="Textures\Carrier.png" />
     <Image Include="Textures\Cruiser.png" />
     <Image Include="Textures\Destroyer.png" />
+    <Image Include="Textures\fireparticle.png" />
     <Image Include="Textures\GuessBoard2.png" />
-    <Image Include="Textures\Ship.png" />
     <Image Include="Textures\Submarine.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="PIXEARG_.TTF" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="grid.frag" />
+    <None Include="particle.frag" />
+    <None Include="particle.vert" />
+    <None Include="postprocessing.frag" />
+    <None Include="postprocessing.vert" />
     <None Include="radar.frag" />
-    <None Include="water_grid.frag" />
+    <None Include="ship.frag" />
+    <None Include="water.frag" />
     <None Include="basic_sprite.frag" />
     <None Include="basic_sprite.vert" />
   </ItemGroup>

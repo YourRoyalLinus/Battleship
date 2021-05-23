@@ -87,6 +87,12 @@
     <ClCompile Include="PeerNetwork.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -161,6 +167,12 @@
     <ClInclude Include="Opponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Battleship.png">
@@ -196,14 +208,14 @@
     <Image Include="Textures\Destroyer.png">
       <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\Ship.png">
-      <Filter>Header Files\Resource Files\Textures</Filter>
-    </Image>
     <Image Include="Textures\Submarine.png">
       <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\GuessBoard2.png">
       <Filter>Header Files\Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\fireparticle.png">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +224,6 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <None Include="water_grid.frag">
-      <Filter>Header Files\Resource Files\Shaders</Filter>
-    </None>
     <None Include="basic_sprite.frag">
       <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
@@ -223,6 +232,27 @@
     </None>
     <None Include="radar.frag">
       <Filter>Header Files\Resource Files\Shaders</Filter>
+    </None>
+    <None Include="particle.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="particle.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="water.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="grid.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="postprocessing.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="postprocessing.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ship.frag">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

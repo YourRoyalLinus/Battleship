@@ -9,7 +9,14 @@ const glm::vec2 Board::RADAR_BOARD_POSITION = glm::vec2(0.0f, 0.0f);
 const glm::vec2 Board::SIZE = glm::vec2(600.0f, 600.0f);
 
 //TODO: THIS CONSTRUCTOR IS A FUCKING MESS 
-Board::Board(Type type) : Entity(type == Type::PLAYER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::PLAYER ? "grid" : "radar")) {
+Board::Board(Type type) : type(type), Entity(type == Type::PLAYER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::PLAYER ? "water" : "radar")) {
+	//TODO: CLEAN THIS UP
+	if (type == Type::PLAYER) {
+		waveMap = ResourceManager::getTexture("waveMap");
+	}
+	else if (type == Type::RADER) {
+		waveMap = ResourceManager::getTexture("pings");
+	}
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
 	for (int row = 0; row < BOARD_WIDTH; row++) {
@@ -88,6 +95,12 @@ std::vector<Square> Board::occupiedSquares() {
 bool Board::guess(const std::pair<int, int> coord, GameParams::Turn turn) {
 	Square& square = squares[coord.first][coord.second];
 	bool hit = validCoord(coord) && square.occupied;
+	//If the square has already been guessed return false.
+	for (auto start = guessedSquares.begin(); start != guessedSquares.end(); ++start) {
+		if (start->row == square.row && start->col == square.col) {
+			hit = false;
+		}
+	}
 	//TODO this is really ugly and can probably be done a better way! Should the board even be doing this?
 	if (hit) {
 		damageHitShip(coord, turn);
@@ -168,6 +181,10 @@ void Board::damageSankShip(Ship ship, GameParams::Turn turn) {
 	}
 
 	std::cout << sinker << " has sunk " << sinkee << "'s " << shipType << "!" << std::endl;
+}
+
+void Board::draw(SpriteRenderer& spriteRenderer) {
+	spriteRenderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(0), this->waveMap);
 }
 
 Board::~Board() {

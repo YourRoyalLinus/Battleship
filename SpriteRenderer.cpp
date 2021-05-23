@@ -39,7 +39,7 @@ void SpriteRenderer::initRenderData(){
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color, glm::vec2 pointOfRotation){
+void SpriteRenderer::DrawSprite(Texture2D& texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color, glm::vec2 pointOfRotation, Texture2D& normalMap){
     //Prepare transformations
     this->shader.use();
     glm::mat4 model = glm::mat4(1.0f);
@@ -77,8 +77,15 @@ void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec
   
     glActiveTexture(GL_TEXTURE0);
     texture.bind();
-
+    if (normalMap.ID != 0) {
+        glActiveTexture(GL_TEXTURE1);
+        normalMap.bind();
+        glActiveTexture(GL_TEXTURE0);
+    }
+     
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    
+
 }  

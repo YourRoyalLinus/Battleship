@@ -44,7 +44,14 @@ class Board : public Entity {
 		/* A collection of squares which have been guessed for this board */
 		std::vector<Square> guessedSquares;
 
-		~Board();
+	void Board::draw(SpriteRenderer& spriteRenderer) override;
+
+	bool squareOccupied(std::pair<int, int> square) {
+		return squares[square.first][square.second].occupied;
+	}
+
+
+	~Board();
 
 
 	protected:
@@ -54,6 +61,12 @@ class Board : public Entity {
 
 		/* Check if damage sunk ship and print to console */
 		void damageSankShip(Ship ship, GameParams::Turn turn);
+	Type type;
+
+	Texture2D waveMap;
+
+	/* Deal damage to the ship at the current square */
+	void damageHitShip(std::pair<int, int> coord);
 
 		bool validCoord(const std::pair<int, int> coord);
 
