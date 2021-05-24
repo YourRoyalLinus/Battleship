@@ -93,8 +93,13 @@ std::vector<Square> Board::occupiedSquares() {
 
 
 bool Board::guess(const std::pair<int, int> coord, GameParams::Turn turn) {
+	bool validSquare = validCoord(coord);
+	//If you tried to guess at an invalid position
+	if (!validSquare)
+		return false;
+
 	Square& square = squares[coord.first][coord.second];
-	bool hit = validCoord(coord) && square.occupied;
+	bool hit = square.occupied;
 	//If the square has already been guessed return false.
 	for (auto start = guessedSquares.begin(); start != guessedSquares.end(); ++start) {
 		if (start->row == square.row && start->col == square.col) {
@@ -134,15 +139,18 @@ bool Board::validCoord(const std::pair<int, int> coord) {
 }
 
 void Board::damageHitShip(std::pair<int,int> coord, GameParams::Turn turn) {
-	for (auto start = activeShips.begin(); start != activeShips.end(); start++) {
-		Ship& ship = *start;
-		auto hitSquare = std::find(ship.coords.begin(), ship.coords.end(), coord);
-		if (hitSquare != ship.coords.end()) //if the ship contains the coord guess
+	for (auto currentShip = activeShips.begin(); currentShip != activeShips.end(); currentShip++) {
+		auto hitSquare = std::find(currentShip->coords.begin(), currentShip->coords.end(), coord);
+		if (hitSquare != currentShip->coords.end()) //if the ship contains the coord guess
 		{
-			start->hitsTaken++;
-			if (ship.sunk()) {
-				damageSankShip(ship, turn);
-				activeShips.erase(start);
+
+			currentShip->hitsTaken++;
+			if (currentShip->sunk()) {
+				for (auto coord : currentShip->coords) {
+					squares[coord.first][coord.second].occupied = false;
+				}
+				damageSankShip(*currentShip, turn);
+				currentShip = activeShips.erase(currentShip);
 				break;
 			}
 		}

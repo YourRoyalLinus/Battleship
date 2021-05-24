@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
-#include <glm.hpp>
-#include <ext.hpp>
+#include <glm\glm.hpp>
+#include <glm\ext.hpp>
 #include <SDL.h>
 #include "Game.h"
 #include "ResourceManager.h"
@@ -10,11 +10,11 @@
 #include "Texture2D.h"
 
 Game::Game() : net(nullptr), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::SOLO), player(nullptr), opponent(nullptr),
-			   playerBoardRenderer(nullptr), spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr){
+			  spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr){
 }
 
 Game::Game(PeerNetwork* network) : net(network), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::PVP), player(nullptr), opponent(nullptr),
-playerBoardRenderer(nullptr), spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) {
+ spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) {
 }
 
 Game::~Game() {
@@ -63,9 +63,9 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\WaterGrid2.png", GL_RGBA, GL_RGBA, "grid");
 	ResourceManager::loadTexture("Textures\\GuessBoard2.png", GL_RGBA, GL_RGBA, "radar");
 
+	ResourceManager::loadTexture("Textures\\pings.png", GL_RGB, GL_RGB, "pings");
 	ResourceManager::loadTexture("Textures\\waterGradient.png", GL_RGB, GL_RGB, "water");
 	ResourceManager::loadTexture("Textures\\waveTexture.png", GL_RED, GL_RED, "waveMap");
-
 
 	// --ships--
 	ResourceManager::loadTexture("Textures\\Destroyer2.png", GL_RGBA, GL_RGBA, "destroyer");
@@ -78,10 +78,10 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\sunGradient.png", GL_RGB, GL_RGB, "sunGradient");
 	// --hitMarkers--
 	ResourceManager::loadTexture("Textures\\BattleShip_Radar_Miss.png", GL_RGBA, GL_RGBA, "radar_miss");
-	//this texture isn't cooperating but I want to make something better evenetually anyway so Idc that much.
-	//ResourceManager::loadTexture("Textures\\BattleShip_Radar_Hit.png", false, "radar_hit");
-	ResourceManager::loadTexture("Textures\\BattleShip_Miss.png", true, "miss");
-	ResourceManager::loadTexture("Textures\\BattleShip_Hit.png", true, "hit");
+	ResourceManager::loadTexture("Textures\\BattleShip_Miss.png", GL_RGBA, GL_RGBA, "miss");
+	ResourceManager::loadTexture("Textures\\BattleShip_Hit.png", GL_RGBA, GL_RGBA, "hit");
+	//particles
+	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
 
 
 	player = new Player();
@@ -92,11 +92,6 @@ void Game::init() {
 	else if (mode == GameParams::Mode::PVP) {
 		opponent = new Player(mode); //Sets Opponent to be an interface of the Player class with a Radar board 
 	}
-	ResourceManager::loadTexture("Textures\\BattleShip_Miss.png", GL_RGBA, GL_RGBA, "miss");
-	ResourceManager::loadTexture("Textures\\BattleShip_Hit.png", GL_RGBA, GL_RGBA, "hit");
-	//particles
-	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
-	ResourceManager::loadTexture("Textures\\pings.png", GL_RGB, GL_RGB, "pings");
 	
 	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -106,13 +101,7 @@ void Game::init() {
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
 	shipRenderer = new SpriteRenderer(ResourceManager::getShader("ship"));
 
-	playerBoard = new Board(Board::Type::PLAYER);
-	radarBoard = new Board(Board::Type::RADER);
-
 	grid = new Entity(glm::vec2(600.0, 0.0), glm::vec2(600.0, 600.0), ResourceManager::getTexture("grid"));
-
-	human = new Player();
-	computer = new Player();
 
 }
 
@@ -136,7 +125,6 @@ void Game::handleInput() {
 
 void Game::update(float dt) {
 	//Hotload shaders
-	updateShaders();
 	if (state == GameParams::State::SETUP) {
 		//The player has placed all the ships
 		if (player->ships.empty()) {			
@@ -229,7 +217,15 @@ void Game::update(float dt) {
 			if(mode == GameParams::Mode::SOLO) {
 				int numShips = player->board->activeShips.size();
 				std::pair<int, int> computerGuess = opponent->GuessCoordinate();
-				opponent->hitStreak = player->board->guess(computerGuess, turn);
+				bool hit = player->board->guess(computerGuess, turn);
+
+				if (hit) {
+					spawnFire(computerGuess);
+					shakeScreen();
+				}
+
+				opponent->hitStreak = hit;
+			
 				if (numShips > player->board->activeShips.size()) {
 					opponent->SankShip();
 				}
@@ -249,6 +245,11 @@ void Game::update(float dt) {
 				else if (buffer.bufferType == Payload::BufferType::NEXT_GUESS) {
 					std::pair<int, int> oppGuess = { buffer.xChoordGuess, buffer.yChoordGuess };
 					bool oppGuessRes = player->board->guess(oppGuess, turn);
+
+					if (oppGuessRes) {
+						spawnFire(oppGuess);
+						shakeScreen();
+					}
 
 					int resp = 0;
 					if (player->board->activeShips.empty()) {
@@ -295,24 +296,6 @@ void Game::update(float dt) {
 		exit(0);
 	}
 
-	//Check if any of the ships where the fire/smoke emmitters are place have been sunk (ie. those squares are no longer accupied & remove them if they have)
-	//This logic is pretty gnarly because removing an iterator invalidates the iterator.
-
-	auto fireEmitter = fireEmitters.begin();
-	auto smokeEmitter = smokeEmitters.begin();
-	while (fireEmitter != fireEmitters.end()) 
-	{
-		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y};
-		if (!playerBoard->squareOccupied(emmiterPos)) {
-			fireEmitter = fireEmitters.erase(fireEmitter);
-			smokeEmitter = smokeEmitters.erase(smokeEmitter);
-			//std::cout << "Emmitter at " << emmiterPos.first << " " << emmiterPos.second << " should be deactivated" << std::endl;
-		}
-		else {
-			smokeEmitter++;
-			fireEmitter++;
-		}
-	}
 	for (auto fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
 		fireEmitter->update(dt, 8, glm::vec2(35.0f));
 	}
@@ -347,20 +330,18 @@ void Game::render(float dt) {
 	ResourceManager::getShader("radar2").use().setFloat("fillStrength", 0.3f);
 	ResourceManager::getShader("radar2").use().setVec2("resolution", glm::vec2(600.0f, 600.0f));
 
-
-
-
 	//Render to off-screen buffer for postprocessing effects
 	effects->beginRender();
 
-	radarBoard->draw(*radarBoardRenderer);
-	playerBoard->draw(*waterRenderer);
+	opponent->board->draw(*radarBoardRenderer);
+	player->board->draw(*waterRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 	grid->draw(*gridRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 
-	for(auto square : playerBoard->guessedSquares){
+	//Draw miss markers where opponent guessed wrong
+	for(auto square : player->board->guessedSquares){
 		if (!square.occupied) {
 			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
 			miss.draw(*spriteRenderer);
@@ -368,18 +349,16 @@ void Game::render(float dt) {
 	}
 
 	//draw placed ships on player's board
-	for (auto& ship : playerBoard->activeShips) {
+	for (auto& ship : player->board->activeShips) {
 		ship.draw(*shipRenderer);
 	}
-
+	
 	for (auto& fireEmitter : fireEmitters) {
 		fireEmitter.draw();
 	}
 	for (auto& smokeEmitter : smokeEmitters) {
 		smokeEmitter.draw();
 	}
-
-	
 
 	//draw placing ship if you are in setup
 	if (state == GameParams::State::SETUP) {
@@ -392,12 +371,44 @@ void Game::render(float dt) {
 		}
 	}	
 
+	removeUnderwaterFire();
 
 	//after redering whole scene to off-screen buffer, apply postprocessing affects and blit to screen.
 	effects->endRender();
 	effects->render(shakeTime);
 	
 }
+
+
+void Game::spawnFire(std::pair<int,int> square) {
+	glm::vec2 squarePos = glm::vec2(square.first, square.second);
+	ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 1000, squarePos, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
+	ParticleEmitter smokeEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 300, squarePos, glm::vec4(0.2, 0.2, 0.2, 0.05), glm::vec4(0.0, 0.0, 0.0, 0.0),
+		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	fireEmitters.push_back(fireEmitter);
+	smokeEmitters.push_back(smokeEmitter);
+}
+
+void Game::removeUnderwaterFire() {
+	//Check if any of the ships where the fire/smoke emmitters are place have been sunk (ie. those squares are no longer accupied & remove them if they have)
+	//This logic is pretty gnarly because removing an iterator invalidates the iterator.
+	auto fireEmitter = fireEmitters.begin();
+	auto smokeEmitter = smokeEmitters.begin();
+	while (fireEmitter != fireEmitters.end()) 
+	{
+		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y};
+		if (!player->board->squareOccupied(emmiterPos)) {
+			fireEmitter = fireEmitters.erase(fireEmitter);
+			smokeEmitter = smokeEmitters.erase(smokeEmitter);
+			//std::cout << "Emmitter at " << emmiterPos.first << " " << emmiterPos.second << " should be deactivated" << std::endl;
+		}
+		else {
+			smokeEmitter++;
+			fireEmitter++;
+		}
+	}
+}
+
 
 void Game::renderRadarPings() {
 	//render radar information to offscreen buffer based of hit's and misses from player.
@@ -413,7 +424,7 @@ void Game::renderRadarPings() {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//now actually render to the texture.
-	for (auto square : radarBoard->guessedSquares) {
+	for (auto square : opponent->board->guessedSquares) {
 		if (square.occupied) {
 			Marker hit(Marker::Type::RADAR_HIT, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
 			hit.draw(*spriteRenderer);

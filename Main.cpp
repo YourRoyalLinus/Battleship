@@ -212,21 +212,21 @@ int main(int argc, char* argv[]) {
 	}
 
 
-
+	float deltaTime = 0;
+	float frameStart = ticks();
 	while (game->state != GameParams::State::OVER) {
-	
+		
 		game->handleInput();
-		game->update();
+		game->update(deltaTime);
 		
 		//render
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		game->render();
+		game->render(deltaTime);
 
-			SDL_GL_SwapWindow(window);
-			deltaTime = 0;
-		
+		SDL_GL_SwapWindow(window);
+		deltaTime = 0;
 
 		float framEnd = ticks();
 		deltaTime += framEnd - frameStart;
