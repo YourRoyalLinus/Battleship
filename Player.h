@@ -1,25 +1,33 @@
 #pragma once
-#include "Opponent.h"
+#include "GameParams.h"
+#include "Board.h"
+#include "GuessStrategy.h"
+#include <functional>
 
-class Player : public Opponent{
+class Player{
 	public:
-		Player() {
-			board = new Board(Board::Type::PLAYER);
-		}
-		Player(GameParams::Mode pvp) {
-			board = new Board(Board::Type::RADER);
-		}
+		enum class Type {
+			HUMAN,
+			EASY_COMPUTER,
+			MEDIUM_COMPUTER,
+			HARD_COMPUTER
+		};
 
-	/* Not a huge fan of just hidding unimplemented overloads... */
+		Player(Type type);
+
+		void guess(Player& opponent) {
+			guessStrategy->guess(*this, opponent);
+		}
+		void placeShip() { shipPlacementProc(); }
+
+
+		Board* board;
+		std::vector<Ship> ships = { Ship(Ship::Type::CARRIER), Ship(Ship::Type::BATTLESHIP), Ship(Ship::Type::CRUISER), Ship(Ship::Type::SUBMARINE), Ship(Ship::Type::DESTROYER) };
+		GuessStrategy* guessStrategy;
+		Ship* shipToPlace;
+
 	private:
-			std::pair<int, int> GuessCoordinate() { 
-				//NOT IMPLEMENTED FOR PLAYER 
-				return { -1, -1};
-			}
-
-			void SankShip() { 
-				//NOT IMPLEMENTED FOR PLAYER
-				return;
-			}
+		std::function<void()> shipPlacementProc;
+		
 };
 

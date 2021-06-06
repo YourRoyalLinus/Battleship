@@ -28,6 +28,12 @@
     <Filter Include="Header Files\Resource Files\Shaders">
       <UniqueIdentifier>{26a1a9ac-7c86-423e-8479-0e47d3e06bfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GFX">
+      <UniqueIdentifier>{1fc43925-985b-41db-8ef0-b5ba597b731c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{aeba0100-de6e-4332-b73e-12e980208510}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -42,28 +48,10 @@
     <ClCompile Include="Ship.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stb_configs.cpp">
       <Filter>Source Files\stb</Filter>
     </ClCompile>
-    <ClCompile Include="Texture2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComputerFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EasyComputer.cpp">
@@ -78,20 +66,62 @@
     <ClCompile Include="..\..\..\vclib\glad\src\glad.c">
       <Filter>Source Files\glad</Filter>
     </ClCompile>
-    <ClCompile Include="ConnectingPeer.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HostingPeer.cpp">
+    <ClCompile Include="InputHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PeerNetwork.cpp">
+    <ClCompile Include="HumanGuessStrategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEmitter.cpp">
+    <ClCompile Include="RepositionShipCommand.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SinglePlayerSetup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SinglePlayerPlayState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiPlayerSetup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiPlayerPlayState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>GFX</Filter>
     </ClCompile>
     <ClCompile Include="PostProcessor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>GFX</Filter>
+    </ClCompile>
+    <ClCompile Include="HostingPeer.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectingPeer.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="PeerNetwork.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,34 +137,10 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Marker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Computer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputerFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EasyComputer.h">
@@ -149,28 +155,94 @@
     <ClInclude Include="GameParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectingPeer.h">
+    <ClInclude Include="InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HostingPeer.h">
+    <ClInclude Include="GuessStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Peer.h">
+    <ClInclude Include="ComputerGuessStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PeerNetwork.h">
+    <ClInclude Include="HumanGuessStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Payload.h">
+    <ClInclude Include="Command.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Opponent.h">
+    <ClInclude Include="PlaceShipCommand.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NullCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RepositionShipCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateShipCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SinglePlayerSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SinglePlayerPlayState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiPlayerSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiPlayerPlayState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MakeGuessCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Marker.h">
+      <Filter>GFX</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
-      <Filter>Header Files</Filter>
+      <Filter>GFX</Filter>
     </ClInclude>
     <ClInclude Include="PostProcessor.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectingPeer.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="HostingPeer.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerHitEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -215,7 +287,7 @@
       <Filter>Header Files\Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\fireparticle.png">
-      <Filter>Resource Files\Textures</Filter>
+      <Filter>Header Files\Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -233,26 +305,26 @@
     <None Include="radar.frag">
       <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
-    <None Include="particle.vert">
-      <Filter>Resource Files\Shaders</Filter>
+    <None Include="grid.frag">
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="particle.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
-    <None Include="water.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="grid.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="postprocessing.vert">
-      <Filter>Resource Files\Shaders</Filter>
+    <None Include="particle.vert">
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="postprocessing.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
+    </None>
+    <None Include="postprocessing.vert">
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
     <None Include="ship.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Header Files\Resource Files\Shaders</Filter>
+    </None>
+    <None Include="water.frag">
+      <Filter>Header Files\Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

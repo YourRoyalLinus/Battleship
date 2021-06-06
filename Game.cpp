@@ -8,19 +8,16 @@
 #include "Marker.h"
 #include <stb_image.h>
 #include "Texture2D.h"
+#include "MenuState.h"
+#include "PlayerHitEvent.h"
 
-Game::Game() : net(nullptr), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::SOLO), player(nullptr), opponent(nullptr),
-			  spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr){
-}
 
-Game::Game(PeerNetwork* network) : net(network), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::PVP), player(nullptr), opponent(nullptr),
- spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) {
+Game::Game(){
 }
 
 Game::~Game() {
 	delete net;
 	delete player;
-	Opponent::DeallocOpponent(opponent);
 }
 
 void Game::init() {
@@ -36,7 +33,7 @@ void Game::init() {
 	ResourceManager::loadShader("postprocessing.vert", "postprocessing.frag", "postprocessing");
 
 	//Create Orthographic Projection Matrix
-	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(GameParams::SCREEN_WIDTH), static_cast<float>(GameParams::SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
 	//Configure shaders
 	ResourceManager::getShader("water").use().setInt("image", 0);
 	ResourceManager::getShader("water").setInt("waveMap", 1);
@@ -55,6 +52,12 @@ void Game::init() {
 	ResourceManager::getShader("radar2").use().setInt("image", 0);
 	ResourceManager::getShader("radar2").setInt("pings", 1);
 	ResourceManager::getShader("radar2").setMat4("projection", projection);
+	ResourceManager::getShader("radar2").setFloat("radius", 0.62f);
+	ResourceManager::getShader("radar2").setFloat("glowStrength", 0.2f);
+	ResourceManager::getShader("radar2").setVec3("color", glm::vec3(0.0f, 0.6431372549019608f, 0.09019607843137255f)); //green
+	ResourceManager::getShader("radar2").setFloat("fillStrength", 0.3f);
+	ResourceManager::getShader("radar2").setVec2("resolution", glm::vec2(600.0f, 600.0f));
+
 
 
 	//Load Textures
@@ -83,17 +86,10 @@ void Game::init() {
 	//particles
 	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
 
-
-	player = new Player();
-	if (mode == GameParams::Mode::SOLO) {
-		Computer::Difficulty diff = Computer::Difficulty::MEDIUM;
-		opponent = ComputerFactory::InitComputer(diff);
-	}
-	else if (mode == GameParams::Mode::PVP) {
-		opponent = new Player(mode); //Sets Opponent to be an interface of the Player class with a Radar board 
-	}
+	player = new Player(Player::Type::HUMAN);
+	player->board->addObserver(this);
 	
-	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), SCREEN_WIDTH, SCREEN_HEIGHT);
+	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), GameParams::SCREEN_WIDTH, GameParams::SCREEN_HEIGHT);
 
 	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
 	gridRenderer = new SpriteRenderer(ResourceManager::getShader("grid"));
@@ -103,199 +99,14 @@ void Game::init() {
 
 	grid = new Entity(glm::vec2(600.0, 0.0), glm::vec2(600.0, 600.0), ResourceManager::getTexture("grid"));
 
-}
+	state = new MenuState();
 
-void Game::handleInput() {
-	SDL_Event event;
-	if (SDL_PollEvent(&event) != NULL) {
-		if (event.type == SDL_QUIT) {
-			exit(0);
-		}
-		SDL_GetMouseState(&mousePosX, &mousePosY);
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (event.button.button == SDL_BUTTON_LEFT)
-				leftClick = true;
-			else if (event.button.button == SDL_BUTTON_RIGHT)
-				rightClick = true;
-		}
-
-
-	}
 }
 
 void Game::update(float dt) {
-	//Hotload shaders
-	if (state == GameParams::State::SETUP) {
-		//The player has placed all the ships
-		if (player->ships.empty()) {			
-			if (mode == GameParams::Mode::SOLO) {
-				//Computer places all it's ships
-				while (!opponent->ships.empty()) {
-					Ship& computerShipRef = opponent->ships.back();
+	state->update(*this);
 
-					int row = rand() % 8;
-					int col = rand() % 8;
-
-					computerShipRef.snapToPosition({ row, col });
-
-					if (opponent->board->placeShip(computerShipRef, computerShipRef.coords))
-						opponent->ships.pop_back();
-
-				}
-				//Computer is done placing all it's ships move on to next state.
-				state = GameParams::State::PLAYING;
-				turn = GameParams::Turn::PLAYER;
-			}
-			else {
-				state = GameParams::State::PLAYING;
-			}
-			return;
-		}
-
-		Ship& currentShipRef = player->ships.back();
-
-		/* Clamp position to player board grid square */
-		int mouseXSquare = (mousePosX - SCREEN_WIDTH/2) / Board::SQUARE_PIXEL_SIZE;
-		int mouseYSquare = (mousePosY) / Board::SQUARE_PIXEL_SIZE;
-
-		currentShipRef.snapToPosition({ mouseYSquare, mouseXSquare }); //Ypos = row, Xpos = col.
-
-		if (leftClick) {
-			if (player->board->placeShip(currentShipRef, currentShipRef.coords)) {
-				player->ships.pop_back();
-				player->board->print();
-				std::cout << "\n\n" << std::endl;
-			}
-			else { printf("You can't place a ship there!\n"); }
-			leftClick = false; // "Consumed" left-click event,
-		}
-		else if (rightClick) {
-			currentShipRef.rotate(); //TODO: Rotations are broken right now
-			rightClick = false;
-		}
-	}
-	else if(state == GameParams::State::PLAYING){
-		if (turn == GameParams::Turn::PLAYER) {
-			if (leftClick) {
-				/* Clamp position to player board grid square */
-				int mouseYSquare = (mousePosX) / Board::SQUARE_PIXEL_SIZE; //Vector<Vector> -> XY-Plane rotated 90 deg clockwise -> horizontal movement is on the Y axis
-				int mouseXSquare = (mousePosY) / Board::SQUARE_PIXEL_SIZE; //Vector<Vector> -> XY-Plane rotated 90 deg clockwise -> vertical movement is on the X axis
-				if (opponent->board->alreadyGuessedSquare({ mouseXSquare, mouseYSquare })) {
-					std::cout << "You've already guessed [" << (char) (65 + mouseXSquare) << ":" << mouseYSquare + 1 << "]!" << std::endl; 
-					leftClick = false;
-					return;
-				}
-				if (mode == GameParams::Mode::SOLO) {
-					if (opponent->board->guess({ mouseXSquare, mouseYSquare }, turn)) {
-						std::cout << "GUESS[" << (char)(65 + mouseXSquare) << ":" << mouseYSquare + 1 << "]" << " Hit!" << std::endl; 
-					}
-					else {
-						std::cout << "GUESS[" << (char)(65 + mouseXSquare) << ":" << mouseYSquare +1 << "]" << " Miss!" << std::endl;
-					}
-					turn = GameParams::Turn::OPPONENT;
-					leftClick = false;
-				}
-				else if (mode == GameParams::Mode::PVP)
-				{
-					int resp = net->SendNextGuess(mouseXSquare, mouseYSquare);
-					//Unable to send data to the other player before timeout period expired(60 seconds)
-					if (resp == 0) {
-						std::cout << "Lost connection to peer...\n";
-						std::cout << "Game Over!\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-
-					turn = GameParams::Turn::OPPONENT;
-					leftClick = false;
-					return;
-				}
-				
-			}
-		}
-		else {
-			if(mode == GameParams::Mode::SOLO) {
-				int numShips = player->board->activeShips.size();
-				std::pair<int, int> computerGuess = opponent->GuessCoordinate();
-				bool hit = player->board->guess(computerGuess, turn);
-
-				if (hit) {
-					spawnFire(computerGuess);
-					shakeScreen();
-				}
-
-				opponent->hitStreak = hit;
-			
-				if (numShips > player->board->activeShips.size()) {
-					opponent->SankShip();
-				}
-				turn = GameParams::Turn::PLAYER;
-			}
-			else if(mode == GameParams::Mode::PVP) {
-				auto buffer = net->ReceiveData();
-				if (buffer.bufferType == Payload::BufferType::GUESS_RESULT) {
-					if (buffer.prevGuessHit == true) {
-						std::cout << "GUESS[" << (char)(65 + buffer.xChoordGuess) << ":" << buffer.yChoordGuess + 1 << "]" << " Hit!" << std::endl; //TODO CONVERT TO ALPHA
-					}
-					else {
-						std::cout << "GUESS[" << (char)(65 + buffer.xChoordGuess) << ":" << buffer.yChoordGuess + 1 << "]" << " Miss!" << std::endl; //TODO CONVERT TO ALPHA
-					}	
-					opponent->board->markSquare({ buffer.xChoordGuess, buffer.yChoordGuess }, buffer.prevGuessHit);
-				}
-				else if (buffer.bufferType == Payload::BufferType::NEXT_GUESS) {
-					std::pair<int, int> oppGuess = { buffer.xChoordGuess, buffer.yChoordGuess };
-					bool oppGuessRes = player->board->guess(oppGuess, turn);
-
-					if (oppGuessRes) {
-						spawnFire(oppGuess);
-						shakeScreen();
-					}
-
-					int resp = 0;
-					if (player->board->activeShips.empty()) {
-						resp = net->SendGameOver();
-						std::cout << "Opponent has Won.\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-					else {
-						resp = net->SendGuessResult(oppGuess.first, oppGuess.second, oppGuessRes);
-					}
-
-					//Failed to get a response from the other player before the timeout period expired (60 seconds)
-					if (resp == 0) {
-						std::cout << "Lost connection to peer...\n";
-						std::cout << "Game Over!\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-					turn = GameParams::Turn::PLAYER;
-				}
-				else if (buffer.bufferType == Payload::BufferType::GAME_OVER) {
-					std::cout << "You've Won!\n";
-					state = GameParams::State::OVER;
-					return;
-				}
-			}
-
-		}
-
-		if (mode == GameParams::Mode::SOLO) {
-			if (player->board->activeShips.empty()) {
-				std::cout << "Computer Won!" << std::endl;
-				state = GameParams::State::OVER;
-			}
-			else if (opponent->board->activeShips.empty()) {
-				std::cout << "You've Won!" << std::endl;
-				state = GameParams::State::OVER;
-			}
-		}
-
-	}
-	else if (state == GameParams::State::OVER) {
-		exit(0);
-	}
-
+	
 	for (auto fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
 		fireEmitter->update(dt, 8, glm::vec2(35.0f));
 	}
@@ -311,7 +122,48 @@ void Game::update(float dt) {
 		}
 	}
 
+}
 
+void Game::drawMenu() {
+	std::string input;
+	std::cout << "Select a game mode:\n1. Player vs Player\n2. Computer\n";
+	std::cin >> input;
+	switch (stoi(input)) {
+		case 1://PLAYER		
+			mode = GameParams::Mode::PVP;
+			net->ConnectToRandomOpponent(networkStartIp);
+			opponent = new Player(Player::Type::HUMAN);
+			if (net->peerType == Peer::PeerType::HOSTING_PEER) {
+				activePlayer = player;
+				inactivePlayer = opponent;
+			}
+			else if (net->peerType == Peer::PeerType::CONNECTING_PEER) {
+				activePlayer = opponent;
+				inactivePlayer = player;
+			}
+			break;
+		case 2: //COMPUTER
+			mode = (GameParams::Mode::SOLO);
+			std::cout << "\nSelect Computer Difficulty:\n1. EASY\n2. MEDIUM (Default)\n3. HARD\n";
+			std::cin >> input;
+			switch (stoi(input)) {
+				case 1:
+					opponent = new Player(Player::Type::EASY_COMPUTER);
+					break;
+				case 2:
+					opponent = new Player(Player::Type::MEDIUM_COMPUTER);
+					break;
+				case 3:
+					opponent = new Player(Player::Type::HARD_COMPUTER);
+					break;
+				default:
+					opponent = new Player(Player::Type::EASY_COMPUTER);
+					break;
+			}
+			activePlayer = player;
+			inactivePlayer = opponent;
+			break;
+	}
 }
 
 void Game::render(float dt) {
@@ -324,11 +176,6 @@ void Game::render(float dt) {
 	//testing new radar effect.
 	//TODO: these don't need to be done with uniforms right now.
 	ResourceManager::getShader("radar2").use().setFloat("time", mticks());
-	ResourceManager::getShader("radar2").use().setFloat("radius", 0.62f);
-	ResourceManager::getShader("radar2").use().setFloat("glowStrength", 0.2f);
-	ResourceManager::getShader("radar2").use().setVec3("color", glm::vec3(0.0f, 0.6431372549019608f, 0.09019607843137255f)); //green
-	ResourceManager::getShader("radar2").use().setFloat("fillStrength", 0.3f);
-	ResourceManager::getShader("radar2").use().setVec2("resolution", glm::vec2(600.0f, 600.0f));
 
 	//Render to off-screen buffer for postprocessing effects
 	effects->beginRender();
@@ -343,7 +190,7 @@ void Game::render(float dt) {
 	//Draw miss markers where opponent guessed wrong
 	for(auto square : player->board->guessedSquares){
 		if (!square.occupied) {
-			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
+			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
 			miss.draw(*spriteRenderer);
 		}
 	}
@@ -361,7 +208,7 @@ void Game::render(float dt) {
 	}
 
 	//draw placing ship if you are in setup
-	if (state == GameParams::State::SETUP) {
+	if (setup) {
 		if (!player->ships.empty())
 			shipToPlace = &(player->ships.back());
 
@@ -426,11 +273,11 @@ void Game::renderRadarPings() {
 	//now actually render to the texture.
 	for (auto square : opponent->board->guessedSquares) {
 		if (square.occupied) {
-			Marker hit(Marker::Type::RADAR_HIT, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
+			Marker hit(Marker::Type::RADAR_HIT, glm::vec2(square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
 			hit.draw(*spriteRenderer);
 		}
 		else {
-			Marker miss(Marker::Type::RADAR_MISS, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
+			Marker miss(Marker::Type::RADAR_MISS, glm::vec2(square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
 			miss.draw(*spriteRenderer);
 		}
 	}
@@ -447,36 +294,20 @@ float Game::mticks()
     return elapsed.count() / 1000;
 }
 
-void Game::updateShaders() {
-	ResourceManager::hotReload();
-	delete waterRenderer;
-	waterRenderer = nullptr;
-	delete radarBoardRenderer;
-	radarBoardRenderer = nullptr;
-	delete spriteRenderer;
-	spriteRenderer = nullptr;
-	
-	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
-
-	//Configure shaders
-	ResourceManager::getShader("water").use().setInt("image", 0);
-	ResourceManager::getShader("water").setMat4("projection", projection);
-	ResourceManager::getShader("basic_sprite").use().setInt("image", 0);
-	ResourceManager::getShader("basic_sprite").setMat4("projection", projection);
-	ResourceManager::getShader("radar2").use().setInt("image", 0);
-	ResourceManager::getShader("radar2").setMat4("projection", projection);
-
-
-
-	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
-    spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
-	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
-
-}
-
-void Game::changeDifficulty(Computer::Difficulty compDiff) {
-	if (mode == GameParams::Mode::SOLO) {
-		Opponent::DeallocOpponent(opponent);
-		opponent = ComputerFactory::InitComputer(compDiff);
+void Game::onNotify(Event* event) {
+	switch (event->type) {
+	case Event::Type::PLAYER_HIT:
+		if (activePlayer == opponent) {
+			//this if check is technically redunant right now!
+			auto hitEvent = static_cast<PlayerHitEvent*>(event);
+			spawnFire(hitEvent->coords);
+			shakeScreen();
+		}
+		break;
+	case Event::Type::SHIP_SANK:
+		break;
+	default:
+		break;
 	}
+
 }

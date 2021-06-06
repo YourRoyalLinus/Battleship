@@ -6,9 +6,9 @@
 #include "Entity.h"
 #include "Square.h"
 #include "Ship.h"
+#include "Subject.h"
 
-/* This is an abstract base class for derived board classes */
-class Board : public Entity {
+class Board : public Entity, public Subject {
 
 	public:
 		static const int BOARD_WIDTH = 8;
@@ -30,7 +30,7 @@ class Board : public Entity {
 		void print();
 
 		/* Guess at where opponent's ship is placed. Return if hit or miss*/
-		bool guess(const std::pair<int, int> coord, GameParams::Turn turn);
+		bool guess(const std::pair<int, int> coord);
 
 		/* Check to see if the player has already guessed this square */
 		bool alreadyGuessedSquare(const std::pair<int, int> coord);
@@ -56,25 +56,20 @@ class Board : public Entity {
 
 	protected:
 
-		/* Deal damage to the ship at the current square */
-		void damageHitShip(std::pair<int, int> coord, GameParams::Turn turn);
-
-		/* Check if damage sunk ship and print to console */
-		void damageSankShip(Ship ship, GameParams::Turn turn);
-	Type type;
-
-	Texture2D waveMap;
-
 	/* Deal damage to the ship at the current square */
 	void damageHitShip(std::pair<int, int> coord);
 
-		bool validCoord(const std::pair<int, int> coord);
+	/* Check if damage sunk ship and print to console */
+	//	void damageSankShip(Ship ship);
+	Type type;
 
-		/* The squares that make up the actual board. */
-		std::vector<std::vector<Square>> squares;
+	Texture2D waveMap;
+	bool validCoord(const std::pair<int, int> coord);
+	/* The squares that make up the actual board. */
+	std::vector<std::vector<Square>> squares;
 
-		static const glm::vec2 PLAYER_BOARD_POSITION;
-		static const glm::vec2 RADAR_BOARD_POSITION;
-		static const glm::vec2 SIZE;
+	static const glm::vec2 PLAYER_BOARD_POSITION;
+	static const glm::vec2 RADAR_BOARD_POSITION;
+	static const glm::vec2 SIZE;
 	
 };

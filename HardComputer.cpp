@@ -1,19 +1,9 @@
 #pragma once
 #include "HardComputer.h"
+#include "Player.h"
 
-HardComputer::HardComputer(const Difficulty& d) {
-	difficulty = d;
-	board = new Board(Board::Type::RADER);
-}
 
-void HardComputer::SankShip() {
-	hitStreak = false;
-	adjGuessIx = -1;
-	//elo += 100
-	//std::cout << ez << std::endl;
-}
-
-std::pair<int, int> HardComputer::GuessCoordinate() {
+void HardComputer::guess(Player& player, Player& opponent){
 	std::pair<int, int> dir;
 	int row = rand() % 8;
 	int col = rand() % 8;
@@ -55,7 +45,7 @@ std::pair<int, int> HardComputer::GuessCoordinate() {
 
 		guess = { row, col };
 	}
-	else if (!hitStreak && adjGuessIx > -1) {
+	else if (hitStreak && adjGuessIx > -1) {
 		if (adjGuessIx == 0 && (lastHitSqaure.first - 1) < 0) {
 			adjGuessIx++;
 		}
@@ -99,5 +89,5 @@ std::pair<int, int> HardComputer::GuessCoordinate() {
 	guesses.insert(guess);
 	prevGuess = guess;
 
-	return guess;
+	hitStreak = opponent.board->guess(guess);
 }

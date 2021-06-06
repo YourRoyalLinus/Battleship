@@ -1,14 +1,13 @@
 #pragma once
-#include "Computer.h"
+#include "ComputerGuessStrategy.h"
 
-class HardComputer : public Computer
+class HardComputer : public ComputerGuessStrategy
 {
 	public:
-		HardComputer(const Difficulty& d);
+		void guess(Player& player, Player& opponent) override;
 
-		std::pair<int, int> GuessCoordinate();
-
-		void SankShip();
+private:
+	bool hitStreak;
 };
 
 
