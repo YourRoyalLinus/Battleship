@@ -3,8 +3,11 @@ class Event {
 public:
 	enum class Type {
 		PLAYER_HIT,
-		SHIP_SANK
+		SHIP_SANK,
+		MENU_SELECT
 	};
 
-	Type type;
+	Event(Type type) : eventType(type) {}
+
+	Type eventType;
 };

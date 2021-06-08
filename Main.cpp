@@ -110,105 +110,11 @@ int main(int argc, char* argv[]) {
 	//This is how I'm doing RNG for now!
 	srand((unsigned)time(NULL));
 
-	////Select Game Mode
-	//PeerNetwork* net = new PeerNetwork();
-
-	//std::string input;
-	//GameParams::Mode mode;
-	//Computer::Difficulty compDiff;
-	//std::cout << "Select a game mode:\n1. Player vs Player\n2. Computer\n";
-	//std::cin >> input;
-
-	//switch (stoi(input)) {
-	//	case 1://PLAYER		
-	//		mode = GameParams::Mode::PVP;
-	//		std::cout << "\nFind an opponent:\n1. Random opponent\n2. Challenge a friend\n";
-	//		std::cin >> input;
-	//		switch (stoi(input)) {
-	//			case 1: //Random Opponent
-	//				net->ConnectToRandomOpponent(networkStartIp);
-	//				break;
-	//			case 2: // TODO Challenge a friend
-	//				std::cout << "\nCURRENTLY NOT IMPLEMENTED"; //TODO Connect via game code (Hashed IP?)
-	//				exit(0);
-	//				break;
-	//		}
-	//		break;
-	//	case 2: //COMPUTER
-	//		mode = (GameParams::Mode::SOLO);
-	//		std::cout << "\nSelect Computer Difficulty:\n1. EASY\n2. MEDIUM (Default)\n3. HARD\n";
-	//		std::cin >> input;
-	//		switch (stoi(input)) {
-	//			case 1:
-	//				compDiff = Computer::Difficulty::EASY;
-	//				break;
-	//			case 2:
-	//				compDiff = Computer::Difficulty::MEDIUM;
-	//				break;
-	//			case 3:
-	//				compDiff = Computer::Difficulty::HARD;
-	//				break;
-	//			default:
-	//				compDiff = Computer::Difficulty::MEDIUM;
-	//				break;
-	//		}
-	//		break;
-	//	default: //COMPUTER
-	//		mode = (GameParams::Mode::SOLO);
-	//		compDiff = Computer::Difficulty::MEDIUM;
-	//		break;
-	//}
 
 	//Initialize SDL/OpenGL
 	init();
 	Game *game = new Game();
 
-	//if (mode == GameParams::Mode::SOLO) {
-	//	game = new Game();
-	//	game->init();
-	//	if (compDiff != Computer::Difficulty::MEDIUM) {
-	//		game->changeDifficulty(compDiff);
-	//	}
-	//}
-	//else if (mode == GameParams::Mode::PVP) { 
-	//	game = new Game(net);
-
-	//	//Randomize which player goes first
-	//	//TODO Need a way to display who's turn it is
-	//	if (game->net->peerType == Peer::PeerType::HOSTING_PEER) {
-	//		int first = rand() % 100;
-	//		bool turn = (first % 2 == 0);
-	//		int resp = game->net->SendTurn(turn);
-	//		if (resp == 0) { 
-	//			std::cout << "Opposing player disconnected...\n";
-	//			exit(-1);
-	//		}
-
-	//		if (turn) {
-	//			game->turn = GameParams::Turn::PLAYER;
-	//		}
-	//		else {
-	//			game->turn = GameParams::Turn::OPPONENT;
-	//		}
-	//	}
-	//	else if (game->net->peerType == Peer::PeerType::CONNECTING_PEER) {
-	//		auto buffer = game->net->ReceiveData();
-	//		if (buffer.bufferType == Payload::BufferType::TURN) {
-	//			if (buffer.yourTurn) {
-	//				game->turn = GameParams::Turn::PLAYER;
-	//			}
-	//			else {
-	//				game->turn = GameParams::Turn::OPPONENT;
-	//			}
-	//		}
-	//		else {
-	//			std::cout << "Unable to start game. Disconnecting...";
-	//			exit(-1);
-	//		}
-	//	}
-
-	//	game->init();
-	//}
 	game->init();
 
 
@@ -216,7 +122,6 @@ int main(int argc, char* argv[]) {
 	float frameStart = ticks();
 	while (true) {
 		
-		//InputHandler::handleInput();
 		game->update(deltaTime);
 		
 		//render

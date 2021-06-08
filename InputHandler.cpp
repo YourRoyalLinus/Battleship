@@ -6,6 +6,9 @@ int InputHandler::mouseY = 0;
 Command* InputHandler::mouseMove = nullptr;
 Command* InputHandler::leftClick = nullptr;
 Command* InputHandler::rightClick = nullptr;
+Command* InputHandler::keyUp = nullptr;
+Command* InputHandler::keyDown = nullptr;
+Command* InputHandler::enter = nullptr;
 
 
 Command* InputHandler::handleInput() {
@@ -26,7 +29,21 @@ Command* InputHandler::handleInput() {
 			SDL_GetMouseState(&mouseX, &mouseY);
 			return mouseMove;
 		}
-		else {
+		else if(event.type == SDL_KEYDOWN){
+			if (event.key.keysym.sym == SDLK_DOWN) {
+				return keyDown;
+			}
+			else if (event.key.keysym.sym == SDLK_UP) {
+				return keyUp;
+			}
+			else if (event.key.keysym.sym == SDLK_RETURN) {
+				return enter;
+			}
+			else {
+				return nullptr;
+			}
+		}
+			else {
 			return nullptr;
 		}
 	}

@@ -5,12 +5,14 @@
 #include <SDL.h>
 #include "Game.h"
 #include "ResourceManager.h"
-#include "Marker.h"
 #include <stb_image.h>
 #include "Texture2D.h"
 #include "MenuState.h"
 #include "PlayerHitEvent.h"
-
+#include "MenuSelectEvent.h"
+#include "MenuItem.h"
+#include "SinglePlayerSetup.h"
+#include "Marker.h"
 
 Game::Game(){
 }
@@ -58,9 +60,15 @@ void Game::init() {
 	ResourceManager::getShader("radar2").setFloat("fillStrength", 0.3f);
 	ResourceManager::getShader("radar2").setVec2("resolution", glm::vec2(600.0f, 600.0f));
 
-
-
 	//Load Textures
+	// --Menu stuff--
+	ResourceManager::loadTexture("Textures\\MenuTitle.png", GL_RGBA, GL_RGBA, "title");
+	ResourceManager::loadTexture("Textures\\Solo.png", GL_RGBA, GL_RGBA, "solo");
+	ResourceManager::loadTexture("Textures\\PVP.png", GL_RGBA, GL_RGBA, "pvp");
+	ResourceManager::loadTexture("Textures\\Easy.png", GL_RGBA, GL_RGBA, "easy");
+	ResourceManager::loadTexture("Textures\\Medium.png", GL_RGBA, GL_RGBA, "medium");
+	ResourceManager::loadTexture("Textures\\Hard.png", GL_RGBA, GL_RGBA, "hard");
+	ResourceManager::loadTexture("Textures\\Back.png", GL_RGBA, GL_RGBA, "back");
 
 	// --grids--
 	ResourceManager::loadTexture("Textures\\WaterGrid2.png", GL_RGBA, GL_RGBA, "grid");
@@ -86,8 +94,7 @@ void Game::init() {
 	//particles
 	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
 
-	player = new Player(Player::Type::HUMAN);
-	player->board->addObserver(this);
+
 	
 	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), GameParams::SCREEN_WIDTH, GameParams::SCREEN_HEIGHT);
 
@@ -97,10 +104,16 @@ void Game::init() {
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
 	shipRenderer = new SpriteRenderer(ResourceManager::getShader("ship"));
 
-	grid = new Entity(glm::vec2(600.0, 0.0), glm::vec2(600.0, 600.0), ResourceManager::getTexture("grid"));
+	grid = new Entity(glm::vec2(600.0f, 0.0f), glm::vec2(600.0f, 600.0f), ResourceManager::getTexture("grid"));
+	menuWater = new Entity(glm::vec2(0.0f, 0.0f), glm::vec2(1200.0f, 600.0f), ResourceManager::getTexture("water"));
+
+
+	//INIT game state
+	player = new Player(Player::Type::HERO);
+	player->board->addObserver(this);
+
 
 	state = new MenuState();
-
 }
 
 void Game::update(float dt) {
@@ -124,105 +137,65 @@ void Game::update(float dt) {
 
 }
 
-void Game::drawMenu() {
-	std::string input;
-	std::cout << "Select a game mode:\n1. Player vs Player\n2. Computer\n";
-	std::cin >> input;
-	switch (stoi(input)) {
-		case 1://PLAYER		
-			mode = GameParams::Mode::PVP;
-			net->ConnectToRandomOpponent(networkStartIp);
-			opponent = new Player(Player::Type::HUMAN);
-			if (net->peerType == Peer::PeerType::HOSTING_PEER) {
-				activePlayer = player;
-				inactivePlayer = opponent;
-			}
-			else if (net->peerType == Peer::PeerType::CONNECTING_PEER) {
-				activePlayer = opponent;
-				inactivePlayer = player;
-			}
-			break;
-		case 2: //COMPUTER
-			mode = (GameParams::Mode::SOLO);
-			std::cout << "\nSelect Computer Difficulty:\n1. EASY\n2. MEDIUM (Default)\n3. HARD\n";
-			std::cin >> input;
-			switch (stoi(input)) {
-				case 1:
-					opponent = new Player(Player::Type::EASY_COMPUTER);
-					break;
-				case 2:
-					opponent = new Player(Player::Type::MEDIUM_COMPUTER);
-					break;
-				case 3:
-					opponent = new Player(Player::Type::HARD_COMPUTER);
-					break;
-				default:
-					opponent = new Player(Player::Type::EASY_COMPUTER);
-					break;
-			}
-			activePlayer = player;
-			inactivePlayer = opponent;
-			break;
-	}
-}
 
 void Game::render(float dt) {
-	renderRadarPings();
+	state->render(*this);
+	//renderRadarPings();
 
-	//update uniforms
-	ResourceManager::getShader("grid").use().setFloat("iTime", mticks());
-	ResourceManager::getShader("water").use().setFloat("iTime", mticks());
+	////update uniforms
+	//ResourceManager::getShader("grid").use().setFloat("iTime", mticks());
+	//ResourceManager::getShader("water").use().setFloat("iTime", mticks());
 
-	//testing new radar effect.
-	//TODO: these don't need to be done with uniforms right now.
-	ResourceManager::getShader("radar2").use().setFloat("time", mticks());
+	////testing new radar effect.
+	////TODO: these don't need to be done with uniforms right now.
+	//ResourceManager::getShader("radar2").use().setFloat("time", mticks());
 
-	//Render to off-screen buffer for postprocessing effects
-	effects->beginRender();
+	////Render to off-screen buffer for postprocessing effects
+	//effects->beginRender();
 
-	opponent->board->draw(*radarBoardRenderer);
-	player->board->draw(*waterRenderer);
-	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
-	grid->draw(*gridRenderer);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+	//opponent->board->draw(*radarBoardRenderer);
+	//player->board->draw(*waterRenderer);
+	//glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+	//grid->draw(*gridRenderer);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//
 
-	//Draw miss markers where opponent guessed wrong
-	for(auto square : player->board->guessedSquares){
-		if (!square.occupied) {
-			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
-			miss.draw(*spriteRenderer);
-		}
-	}
+	////Draw miss markers where opponent guessed wrong
+	//for(auto square : player->board->guessedSquares){
+	//	if (!square.occupied) {
+	//		Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
+	//		miss.draw(*spriteRenderer);
+	//	}
+	//}
 
-	//draw placed ships on player's board
-	for (auto& ship : player->board->activeShips) {
-		ship.draw(*shipRenderer);
-	}
-	
-	for (auto& fireEmitter : fireEmitters) {
-		fireEmitter.draw();
-	}
-	for (auto& smokeEmitter : smokeEmitters) {
-		smokeEmitter.draw();
-	}
+	////draw placed ships on player's board
+	//for (auto& ship : player->board->activeShips) {
+	//	ship.draw(*shipRenderer);
+	//}
+	//
+	//for (auto& fireEmitter : fireEmitters) {
+	//	fireEmitter.draw();
+	//}
+	//for (auto& smokeEmitter : smokeEmitters) {
+	//	smokeEmitter.draw();
+	//}
 
-	//draw placing ship if you are in setup
-	if (setup) {
-		if (!player->ships.empty())
-			shipToPlace = &(player->ships.back());
+	////draw placing ship if you are in setup
+	//if (setup) {
+	//	if (!player->ships.empty())
+	//		shipToPlace = &(player->ships.back());
 
-		//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
-		if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f) {
-			shipToPlace->draw(*shipRenderer);		
-		}
-	}	
+	//	//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
+	//	if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f) {
+	//		shipToPlace->draw(*shipRenderer);		
+	//	}
+	//}	
 
-	removeUnderwaterFire();
+	//removeUnderwaterFire();
 
-	//after redering whole scene to off-screen buffer, apply postprocessing affects and blit to screen.
-	effects->endRender();
-	effects->render(shakeTime);
+	////after redering whole scene to off-screen buffer, apply postprocessing affects and blit to screen.
+	//effects->endRender();
+	//effects->render(shakeTime);
 	
 }
 
@@ -295,19 +268,19 @@ float Game::mticks()
 }
 
 void Game::onNotify(Event* event) {
-	switch (event->type) {
-	case Event::Type::PLAYER_HIT:
+	switch (event->eventType) {
+	case Event::Type::PLAYER_HIT: {
 		if (activePlayer == opponent) {
 			//this if check is technically redunant right now!
-			auto hitEvent = static_cast<PlayerHitEvent*>(event);
+			auto hitEvent = static_cast<PlayerHitEvent*>(event); //THIS IS TERRIBLE. NOT SURE THE CORRECT WAY TO DO THIS
 			spawnFire(hitEvent->coords);
 			shakeScreen();
 		}
 		break;
-	case Event::Type::SHIP_SANK:
-		break;
-	default:
-		break;
 	}
+	case Event::Type::SHIP_SANK: { break; }
+	default: { break; }
+	}
+	
 
 }

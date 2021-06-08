@@ -34,6 +34,9 @@
     <Filter Include="Networking">
       <UniqueIdentifier>{aeba0100-de6e-4332-b73e-12e980208510}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Menu">
+      <UniqueIdentifier>{f7736d14-bd57-4932-a343-db77c32579eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -81,9 +84,6 @@
     <ClCompile Include="SinglePlayerSetup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MenuState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SinglePlayerPlayState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,6 +122,18 @@
     </ClCompile>
     <ClCompile Include="PeerNetwork.cpp">
       <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuCommand.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Marker.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +200,6 @@
     <ClInclude Include="SinglePlayerSetup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MenuState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SinglePlayerPlayState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -244,6 +253,21 @@
     </ClInclude>
     <ClInclude Include="Subject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuCommand.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuItem.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuSelectEvent.h">
+      <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

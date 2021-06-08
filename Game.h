@@ -8,6 +8,7 @@
 #include "PostProcessor.h"
 #include "GameState.h"
 #include "Observer.h"
+#include "Menu.h"
 
 class Game : public Observer
 {
@@ -19,6 +20,7 @@ class Game : public Observer
 	Player* opponent;
 
 	Entity* grid;
+	Entity* menuWater;
 	
 	SpriteRenderer* waterRenderer;
 	SpriteRenderer* spriteRenderer;
@@ -37,6 +39,7 @@ class Game : public Observer
 
 	GameState* state;
 
+	std::stack<Menu*> menus;
 
 	const std::string networkStartIp = "67.248.183.2";
 
@@ -61,20 +64,9 @@ class Game : public Observer
 		effects->shake = true;
 	}
 
-
-
-	//DELETE THIS
-	bool setup = false;
-
-	
-private:
-
-	void drawMenu();
-
-
 	//Returns seconds since epoch as float. Used to set uniforms.
 	float mticks();
-
+	
 	void renderRadarPings();
 
 	//Remove fire emitters that were on a ship which sank

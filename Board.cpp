@@ -10,9 +10,9 @@ const glm::vec2 Board::RADAR_BOARD_POSITION = glm::vec2(0.0f, 0.0f);
 const glm::vec2 Board::SIZE = glm::vec2(600.0f, 600.0f);
 
 //TODO: THIS CONSTRUCTOR IS A FUCKING MESS 
-Board::Board(Type type) : type(type), Entity(type == Type::PLAYER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::PLAYER ? "water" : "radar")) {
+Board::Board(Type type) : type(type), Entity(type == Type::WATER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::WATER ? "water" : "radar")) {
 	//TODO: CLEAN THIS UP
-	if (type == Type::PLAYER) {
+	if (type == Type::WATER) {
 		waveMap = ResourceManager::getTexture("waveMap");
 	}
 	else if (type == Type::RADER) {

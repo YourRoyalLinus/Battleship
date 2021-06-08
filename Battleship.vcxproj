@@ -131,11 +131,14 @@
     <ClCompile Include="HardComputer.cpp" />
     <ClCompile Include="HumanGuessStrategy.cpp" />
     <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="Marker.cpp" />
     <ClCompile Include="MediumComputer.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MenuCommand.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MultiPlayerPlayState.cpp" />
     <ClCompile Include="MultiPlayerSetup.cpp" />
@@ -173,6 +176,10 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Marker.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuCommand.h" />
+    <ClInclude Include="MenuItem.h" />
+    <ClInclude Include="MenuSelectEvent.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="MultiPlayerPlayState.h" />
     <ClInclude Include="MultiPlayerSetup.h" />

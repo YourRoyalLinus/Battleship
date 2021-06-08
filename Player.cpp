@@ -10,8 +10,8 @@
 
 
 Player::Player(Type type) {
-	if (type == Type::HUMAN) {
-		this->board = new Board(Board::Type::PLAYER);
+	if (type == Type::HERO) {
+		this->board = new Board(Board::Type::WATER);
 	}
 	else {
 		this->board = new Board(Board::Type::RADER);
@@ -42,7 +42,7 @@ Player::Player(Type type) {
 	};
 
 	switch (type) {
-	case Type::HUMAN: {
+	case Type::HERO: {
 		this->shipPlacementProc = humanShipPlacement;
 		this->guessStrategy = new HumanGuessStrategy();
 		break;

@@ -4,10 +4,7 @@
 
 class PlayerHitEvent : public Event {
 public:
-	PlayerHitEvent(std::pair<int,int> coords) : coords(coords)
-	{
-		this->type = Type::PLAYER_HIT;
-	}
+	PlayerHitEvent(std::pair<int,int> coords) : Event(Event::Type::PLAYER_HIT), coords(coords) {}
 
 	std::pair<int, int> coords;
 };

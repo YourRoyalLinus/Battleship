@@ -7,7 +7,8 @@
 class Player{
 	public:
 		enum class Type {
-			HUMAN,
+			HERO,
+			HUMAN_OPPONENT,
 			EASY_COMPUTER,
 			MEDIUM_COMPUTER,
 			HARD_COMPUTER

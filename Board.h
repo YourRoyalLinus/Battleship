@@ -16,7 +16,7 @@ class Board : public Entity, public Subject {
 		static const int SQUARE_PIXEL_SIZE = 75;
 
 		enum class Type {
-			PLAYER,
+			WATER,
 			RADER
 		};
 
