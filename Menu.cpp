@@ -1,5 +1,4 @@
 #include "Menu.h"
-#include "MenuSelectEvent.h"
 
 void Menu::init() {
 	if (!menuItems.empty()) {

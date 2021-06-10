@@ -14,7 +14,7 @@ class Player{
 			HARD_COMPUTER
 		};
 
-		Player(Type type);
+		Player(Type type, GuessStrategy* guessStrategy);
 
 		void guess(Player& opponent) {
 			guessStrategy->guess(*this, opponent);

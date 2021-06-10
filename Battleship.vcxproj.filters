@@ -75,9 +75,6 @@
     <ClCompile Include="InputHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HumanGuessStrategy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RepositionShipCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -126,14 +123,17 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="MenuCommand.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="MenuState.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
     <ClCompile Include="Marker.cpp">
       <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiPlayerGuess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SinglePlayerGuess.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +150,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EasyComputer.h">
@@ -176,22 +173,7 @@
     <ClInclude Include="ComputerGuessStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HumanGuessStrategy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Command.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaceShipCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NullCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RepositionShipCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RotateShipCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
@@ -207,9 +189,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultiPlayerPlayState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MakeGuessCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
@@ -248,16 +227,10 @@
     <ClInclude Include="HostingPeer.h">
       <Filter>Networking</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerHitEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Subject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuCommand.h">
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="MenuItem.h">
@@ -266,8 +239,23 @@
     <ClInclude Include="MenuState.h">
       <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="MenuSelectEvent.h">
-      <Filter>Menu</Filter>
+    <ClInclude Include="NullStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiPlayerGuess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SinglePlayerGuess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Peer.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="PeerNetwork.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload.h">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

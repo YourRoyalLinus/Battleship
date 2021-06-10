@@ -5,7 +5,11 @@
 class MenuState : public GameState
 {
 public:
-	void update(Game& game) override;
-	void render(Game& game) override;
+	MenuState(Game& game);
+	void update() override;
+	void render() override;
+
+private:
+	void selectMenuOption(MenuItem& menuItem);
 };
 

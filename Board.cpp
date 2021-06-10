@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "ResourceManager.h"
 #include "Board.h"
-#include "PlayerHitEvent.h"
 
 
 const glm::vec2 Board::PLAYER_BOARD_POSITION = glm::vec2(600.0f, 0.0f);
@@ -110,7 +109,7 @@ bool Board::guess(const std::pair<int, int> coord) {
 	//TODO this is really ugly and can probably be done a better way! Should the board even be doing this?
 	if (hit) {
 		//tell observers that a player's ship was hit!
-		this->notify(new PlayerHitEvent(coord));
+		this->notify(new PlayerHit(coord));
 		damageHitShip(coord);
 	}
 	guessedSquares.push_back(square);

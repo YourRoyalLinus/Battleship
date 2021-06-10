@@ -2,7 +2,9 @@
 #include "GameState.h"
 class MultiPlayerSetup : public GameState
 {
-	void update(Game& game) override;
-	void render(Game& game) override;
+public:
+	MultiPlayerSetup(Game& game);
+	void update() override;
+	void render() override;
 };
 

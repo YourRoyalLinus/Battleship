@@ -1,23 +1,19 @@
 #include "SinglePlayerPlayState.h"
 #include "InputHandler.h"
-#include "MakeGuessCommand.h"
-#include "NullCommand.h"
 #include "Marker.h"
 #include "Game.h"
 
-void SinglePlayerPlayState::update(Game& game) {
+void SinglePlayerPlayState::update() {
 	Player* player = game.player;
 	Player* opponent = game.opponent;
 	Player* activePlayer = game.activePlayer;
 	
-	InputHandler::setLeftClick(new MakeGuessCommand(game));
-	InputHandler::setMouseMove(new NullCommand());
-	InputHandler::setRightClick(new NullCommand());
-
-	if (game.activePlayer == player) {
-		auto command = InputHandler::handleInput();
-		if (command) {
-			command->execute();
+	if (activePlayer == player) {
+		Event* event = InputHandler::handleInput();
+		if (event == nullptr) { return; }
+		else if (event->eventType == Event::Type::LEFT_CLICK) {
+			player->guess(*opponent);
+			game.endTurn();
 		}
 	}
 	else if (activePlayer == opponent) {
@@ -36,7 +32,7 @@ void SinglePlayerPlayState::update(Game& game) {
 	}
 }
 
-void SinglePlayerPlayState::render(Game& game) {
+void SinglePlayerPlayState::render() {
 	game.renderRadarPings();
 	//update uniforms
 	ResourceManager::getShader("grid").use().setFloat("iTime", game.mticks());

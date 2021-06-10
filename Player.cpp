@@ -3,13 +3,14 @@
 #include "InputHandler.h"
 #include "Board.h"
 #include "Ship.h"
-#include "HumanGuessStrategy.h"
+#include "SinglePlayerGuess.h"
 #include "EasyComputer.h"
 #include "MediumComputer.h"
 #include "HardComputer.h"
+#include "NullStrategy.h"
 
 
-Player::Player(Type type) {
+Player::Player(Type type, GuessStrategy* guessStrategy) : guessStrategy(guessStrategy) {
 	if (type == Type::HERO) {
 		this->board = new Board(Board::Type::WATER);
 	}
@@ -44,22 +45,26 @@ Player::Player(Type type) {
 	switch (type) {
 	case Type::HERO: {
 		this->shipPlacementProc = humanShipPlacement;
-		this->guessStrategy = new HumanGuessStrategy();
+	//	this->guessStrategy = new SinglePlayerGuess();
 		break;
+	}
+	case Type::HUMAN_OPPONENT: {
+		this->shipPlacementProc = []() {};
+//		this->guessStrategy = new NullStrategy();
 	}
 	case Type::EASY_COMPUTER: {
 		this->shipPlacementProc = computerShipPlacement;
-		this->guessStrategy = new EasyComputer();
+	//	this->guessStrategy = new EasyComputer();
 		break;
 	}
 	case Type::MEDIUM_COMPUTER: {
 		this->shipPlacementProc = computerShipPlacement;
-		this->guessStrategy = new MediumComputer();
+	//	this->guessStrategy = new MediumComputer();
 		break;
 	}
 	case Type::HARD_COMPUTER: {
 		this->shipPlacementProc = computerShipPlacement;
-		this->guessStrategy = new HardComputer();
+	//	this->guessStrategy = new HardComputer();
 		break;
 	}
 	default:

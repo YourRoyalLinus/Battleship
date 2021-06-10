@@ -1,5 +1,5 @@
 #pragma once
-#define DEFAULT_PORT "42996"
+#define DEFAULT_PORT "1234" //"42996"
 #define DEFAULT_BUFFER_LEN 1024 //2^10 BYTES
 #include <tuple>
 #include <string>

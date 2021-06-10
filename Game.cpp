@@ -8,8 +8,6 @@
 #include <stb_image.h>
 #include "Texture2D.h"
 #include "MenuState.h"
-#include "PlayerHitEvent.h"
-#include "MenuSelectEvent.h"
 #include "MenuItem.h"
 #include "SinglePlayerSetup.h"
 #include "Marker.h"
@@ -109,15 +107,15 @@ void Game::init() {
 
 
 	//INIT game state
-	player = new Player(Player::Type::HERO);
-	player->board->addObserver(this);
+	/*player = new Player(Player::Type::HERO);
+	player->board->addObserver(this);*/
 
 
-	state = new MenuState();
+	state = new MenuState(*this);
 }
 
 void Game::update(float dt) {
-	state->update(*this);
+	state->update();
 
 	
 	for (auto fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
@@ -139,7 +137,7 @@ void Game::update(float dt) {
 
 
 void Game::render(float dt) {
-	state->render(*this);
+	state->render();
 	//renderRadarPings();
 
 	////update uniforms
@@ -272,8 +270,8 @@ void Game::onNotify(Event* event) {
 	case Event::Type::PLAYER_HIT: {
 		if (activePlayer == opponent) {
 			//this if check is technically redunant right now!
-			auto hitEvent = static_cast<PlayerHitEvent*>(event); //THIS IS TERRIBLE. NOT SURE THE CORRECT WAY TO DO THIS
-			spawnFire(hitEvent->coords);
+			PlayerHit* hitEvent = static_cast<PlayerHit*>(event); //THIS IS TERRIBLE. NOT SURE THE CORRECT WAY TO DO THIS
+			spawnFire(hitEvent->coord);
 			shakeScreen();
 		}
 		break;
