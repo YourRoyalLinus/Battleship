@@ -81,6 +81,8 @@ class Game : public Observer
 	std::vector<ParticleEmitter> fireEmitters;
 	std::vector<ParticleEmitter> smokeEmitters;
 
+	bool hackFlag = false;
+
 
 
 };

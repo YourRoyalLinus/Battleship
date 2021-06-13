@@ -14,6 +14,7 @@
 #include "EasyComputer.h"
 #include "MediumComputer.h"
 #include "HardComputer.h"
+#include "ConnectingState.h"
 
 MenuState::MenuState(Game& game) : GameState(game) {
 	Menu* startMenu = new Menu();
@@ -82,9 +83,9 @@ void MenuState::selectMenuOption(MenuItem& menuItem) {
 	}
 	case MenuItem::ItemType::PVP:
 		game.net = new PeerNetwork();
-		game.player = new Player(Player::Type::HERO, new MultiPlayerGuess(game.net));
+		game.player = new Player(Player::Type::HERO, new MultiPlayerGuess(*game.net));
 		game.opponent = new Player(Player::Type::HUMAN_OPPONENT, new NullStrategy());
-		game.state = new MultiPlayerSetup(game);
+		game.state = new ConnectingState(game);
 		break;
 	case MenuItem::ItemType::EASY:
 		game.player = new Player(Player::Type::HERO, new SinglePlayerGuess());

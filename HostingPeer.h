@@ -5,9 +5,9 @@ class HostingPeer : public Peer
 {
 	public:
 		HostingPeer();
-		SOCKET ListenForOpponent();
+		void ListenForOpponent();
+		SOCKET AcceptConnection();
 	private:
 		void BindSocket();
 		void Listen();
-		void AcceptConnection();
 };

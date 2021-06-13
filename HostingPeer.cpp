@@ -18,16 +18,14 @@ HostingPeer::HostingPeer() {
 }
 
 
-SOCKET HostingPeer::ListenForOpponent() {
+void HostingPeer::ListenForOpponent() {
 	GetAddressInfo();
 	CreateSocket();
 	BindSocket();
 	Listen();
 
 	std::cout << "Waiting for an Opponent...\n";
-	AcceptConnection(); //TODO set to non-blocking and write function to handle connection timeout
 
-	return this->gameSocket;
 }
 
 /* Private Functions */
@@ -63,13 +61,14 @@ void HostingPeer::Listen() {
 /*
 Accept peer connections
 */
-void HostingPeer::AcceptConnection() {
+SOCKET HostingPeer::AcceptConnection() {
 	SOCKET hostPeerSocket = INVALID_SOCKET;
+
 	hostPeerSocket = accept(this->gameSocket, NULL, NULL);
 	if (hostPeerSocket == INVALID_SOCKET) {
 		std::cout << "Connection refused: " << WSAGetLastError() << ".";
 		this->gameSocket = INVALID_SOCKET;
 	}
-
 	this->gameSocket = hostPeerSocket;
+	return this->gameSocket;
 }

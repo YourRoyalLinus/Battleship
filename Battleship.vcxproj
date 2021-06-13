@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="ConnectingState.cpp" />
     <ClCompile Include="HostingPeer.cpp" />
     <ClCompile Include="EasyComputer.cpp" />
     <ClCompile Include="HardComputer.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="ComputerGuessStrategy.h" />
+    <ClInclude Include="ConnectingState.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GuessStrategy.h" />

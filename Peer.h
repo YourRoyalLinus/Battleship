@@ -9,6 +9,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "Payload.h"
+#include <assert.h>
 
 class Peer {	
 	public:
@@ -95,6 +96,23 @@ class Peer {
 				exit(-1);
 			}
 		}
+
+		void setBlocking(bool blocking) {
+			assert(gameSocket != INVALID_SOCKET);
+			u_long blockingMode = blocking? 0 : 1;  //0 for blocking, 1 for non-blocking
+			if (int result = ioctlsocket(this->gameSocket, FIONBIO, &blockingMode) != 0) {
+				std::cout << "ioctlsocket failed with error:" << result << ".";
+			}
+		}
+
+		void setupWSAPollFD() {
+			this->socketFD = {};
+			this->socketFD.fd = gameSocket;
+			this->socketFD.events = POLLRDNORM | POLLWRNORM; //we care about reading and writing to this socket
+		}
+
+		WSAPOLLFD getPollFD() { return this->socketFD; }
+
 	protected:
 		void Disconnect() {
 			//Shutdown the send half of the connection since no more data will be sent
@@ -166,11 +184,13 @@ class Peer {
 
 			}
 
+		
 			this->gameSocket = connectionSocket;
 			//Set recv time out to 1 minute
 			setsockopt(this->gameSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&this->recvTimeOut, sizeof(DWORD)); 
 			//Set send time out to 1 minute
 			setsockopt(this->gameSocket, SOL_SOCKET, SO_SNDTIMEO, (char*)&this->sendTimeOut, sizeof(DWORD));
+
 		}
 
 		void SetSocketTimeouts(DWORD rTO, DWORD sTO) {
@@ -188,6 +208,7 @@ class Peer {
 			this->sendTimeOut = sTO;
 		}
 
+	
 		WSAData wsaData;
 		int queueLength = 1;
 		DWORD recvTimeOut = 60000; //Timeout in miliseconds
@@ -197,4 +218,6 @@ class Peer {
 		struct addrinfo* ptr = nullptr;
 		struct addrinfo hints;
 
+		//WSAPOLL file-descriptor for polling non-blocking socket stuff
+		WSAPOLLFD socketFD;
 };

@@ -9,16 +9,32 @@ void MultiPlayerPlayState::update() {
 	Player* activePlayer = game.activePlayer;
 
 	if (game.activePlayer == player) {
+		//Your turn
+		auto buffer = game.net->ReceiveData();
+		if (buffer.bufferType == Payload::BufferType::GUESS_RESULT) {
+			opponent->board->markSquare({ buffer.xChoordGuess, buffer.yChoordGuess }, buffer.prevGuessHit);
+			game.endTurn();
+		}
+
+
 		Event* event = InputHandler::handleInput();
 		if (event == nullptr) { return; }
 		else if (event->eventType == Event::Type::LEFT_CLICK) {
-			player->guess(*opponent);
-			game.endTurn();
+			if (!guessedThisTurn) {
+				player->guess(*opponent);
+				guessedThisTurn = true;
+			}
 		}
 	}
+
+
 	else if (game.activePlayer == opponent) {
+		guessedThisTurn = false;
+		//Your opponent's turn
 		auto buffer = game.net->ReceiveData();
-		if (buffer.bufferType == Payload::BufferType::GUESS_RESULT) {
+
+		if (buffer.bufferType == Payload::BufferType::EMPTY) { return; }
+		else if (buffer.bufferType == Payload::BufferType::GUESS_RESULT) {
 			opponent->board->markSquare({ buffer.xChoordGuess, buffer.yChoordGuess }, buffer.prevGuessHit);
 		}
 		else if (buffer.bufferType == Payload::BufferType::NEXT_GUESS) {
@@ -41,7 +57,6 @@ void MultiPlayerPlayState::update() {
 				resp = game.net->SendGuessResult(oppGuess.first, oppGuess.second, opponentHit);
 				game.endTurn();
 			}
-
 			//Failed to get a response from the other player before the timeout period expired (60 seconds)
 			if (resp == 0) {
 				std::cout << "Lost connection to peer...\n";
@@ -49,7 +64,6 @@ void MultiPlayerPlayState::update() {
 				exit(-1);
 				return;
 			}
-			//game.endTurn();
 		}
 		else if (buffer.bufferType == Payload::BufferType::GAME_OVER) {
 			std::cout << "You've Won!\n";

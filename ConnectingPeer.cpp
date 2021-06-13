@@ -21,7 +21,7 @@ ConnectingPeer::ConnectingPeer() {
 SOCKET ConnectingPeer::SearchForOpponent(std::string networkIp) {
 	GetAddressInfo(networkIp);
 	CreateSocket();
-
+	this->setBlocking(true);
 	ConnectToSocket(); 
 	std::cout << "Searching for an Opponent in Queue...\n";
 	if (this->gameSocket == INVALID_SOCKET) {
@@ -41,13 +41,14 @@ void ConnectingPeer::ConnectToSocket() {
 	//Connect to hosting peer
 	int r = connect(this->gameSocket, this->ptr->ai_addr, (int)this->ptr->ai_addrlen);
 	if (r == SOCKET_ERROR) {
+		std::cout << WSAGetLastError() << std::endl;
 		Disconnect();
 		this->gameSocket = INVALID_SOCKET;
+		freeaddrinfo(this->result);
 	}
 
-	freeaddrinfo(this->result);
 
-	if (this->gameSocket == INVALID_SOCKET) {
-		std::cout << "No players currently queued in the network... Preparing to host new game!" << std::endl;
-	}
+	//if (this->gameSocket == INVALID_SOCKET) {
+	//	std::cout << "No players currently queued in the network... Preparing to host new game!" << std::endl;
+	//}
 }

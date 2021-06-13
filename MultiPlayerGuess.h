@@ -4,9 +4,9 @@
 class MultiPlayerGuess : public GuessStrategy
 {
 public:
-	MultiPlayerGuess(PeerNetwork* net) : net(net) { /*...*/ }
+	MultiPlayerGuess(PeerNetwork& net) : net(net) { /*...*/ }
 	void guess(Player& player, Player& opponent) override;
 private:
-	PeerNetwork* net;
+	PeerNetwork& net;
 };
 

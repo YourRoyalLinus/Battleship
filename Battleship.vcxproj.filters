@@ -135,6 +135,9 @@
     <ClCompile Include="SinglePlayerGuess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ConnectingState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="Payload.h">
       <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectingState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

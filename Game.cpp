@@ -11,6 +11,7 @@
 #include "MenuItem.h"
 #include "SinglePlayerSetup.h"
 #include "Marker.h"
+#include <thread>
 
 Game::Game(){
 }

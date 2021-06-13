@@ -6,16 +6,7 @@
 #include "Peer.h"
 
 MultiPlayerSetup::MultiPlayerSetup(Game& game) : GameState(game) {
-	game.net->ConnectToRandomOpponent(game.networkStartIp);
-	if (game.net->peerType == Peer::PeerType::HOSTING_PEER) {
-		game.activePlayer = game.player;
-		game.inactivePlayer = game.opponent;
-	}
-	else if (game.net->peerType == Peer::PeerType::CONNECTING_PEER) {
-		game.activePlayer = game.opponent;
-		game.inactivePlayer = game.player;
-	}
-
+	
 }
 
 void MultiPlayerSetup::update() {
