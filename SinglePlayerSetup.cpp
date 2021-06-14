@@ -5,10 +5,18 @@
 #include "SinglePlayerPlayState.h"
 #include "Board.h"
 
+SinglePlayerSetup::SinglePlayerSetup(Game& game) : GameState(game)
+{
+	text.color = glm::vec4(0.2f, 1.0f, 0.6f, 1.0f);
+	text.setFlashing(true);
+	text.setBouncing(true);
+	text.scale(.7);
+}
 void SinglePlayerSetup::update() {
+	text.update(game.mticks());
+
 	Player* player = game.player;
 	Player* opponent = game.opponent;
-
 
 	if (player->ships.empty()) {
 		while (!opponent->ships.empty()) {
@@ -44,7 +52,7 @@ void SinglePlayerSetup::update() {
 			break;
 		}
 		}
-
+		delete event;
 	}
 
 	if (player->ships.empty() && opponent->ships.empty()) {
@@ -52,7 +60,6 @@ void SinglePlayerSetup::update() {
 		game.inactivePlayer = opponent;
 		game.state = new SinglePlayerPlayState(game);
 	}
-
 
 }
 
@@ -62,11 +69,14 @@ void SinglePlayerSetup::render() {
 	ResourceManager::getShader("water").use().setFloat("iTime", game.mticks());
 	ResourceManager::getShader("radar2").use().setFloat("time", game.mticks());
 
+	
 	game.opponent->board->draw(*game.radarBoardRenderer);
 	game.player->board->draw(*game.waterRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 	game.grid->draw(*game.gridRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	text.draw(*game.spriteRenderer);
 
 	//draw placed ships on player's board
 	for (auto& ship : game.player->board->activeShips) {

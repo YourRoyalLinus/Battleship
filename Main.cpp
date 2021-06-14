@@ -1,20 +1,9 @@
 #pragma once
 #include <algorithm>
 #include <ctime>
+#include "Game.h"
 //#include <SDL_opengl.h>
 #include <SDL_image.h>
-#include <stb_image.h>
-#include "HostingPeer.h"
-#include "ConnectingPeer.h"
-#include "Texture2D.h"
-#include "ResourceManager.h"
-#include "SpriteRenderer.h"
-#include "Board.h"
-#include "Player.h"
-#include "Ship.h"
-#include "Game.h"
-#include "Shader.h"
-#include "InputHandler.h"
 
 
 //TODOS:
@@ -41,8 +30,6 @@ void teardown();
 //Initialize SDL, OpenGL & GLAD.
 void init() {
 
-	constexpr int WIDTH = GameParams::SCREEN_WIDTH;
-	constexpr int HEIGHT = GameParams::SCREEN_HEIGHT;
 
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
 		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
@@ -53,7 +40,7 @@ void init() {
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
 
-	window = SDL_CreateWindow( "BATTLESHIP", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow( "BATTLESHIP", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Game::SCREEN_WIDTH, Game::SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if( window == NULL ){
 		printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 	}
@@ -89,7 +76,7 @@ void init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, Game::SCREEN_WIDTH, Game::SCREEN_HEIGHT);
 }
 
 float ticks()

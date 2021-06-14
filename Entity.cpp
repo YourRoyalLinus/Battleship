@@ -8,7 +8,7 @@ Entity::Entity(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec4 color)
 position(pos), size(size), rotation(0.0f), sprite(sprite), color(color){ /*...*/ }
 
 void Entity::draw(SpriteRenderer& renderer){
-	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
+	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(), this->tex2);
 }
 
 

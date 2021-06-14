@@ -18,7 +18,9 @@
 
 MenuState::MenuState(Game& game) : GameState(game) {
 	Menu* startMenu = new Menu();
-	startMenu->addMenuItem(new MenuItem(MenuItem::ItemType::PVP, glm::vec2(600.0f - (510.0f / 2.0f), 50.0f), glm::vec2(510.0f, 110.0f), ResourceManager::getTexture("title")));
+	UIComponent* title = new UIComponent(UIComponent::Alignment::TOP, ResourceManager::getTexture("title"), 1.0f);
+	title->scale(1.5f);
+	startMenu->setTitle(title);
 	startMenu->addMenuItem(new MenuItem(MenuItem::ItemType::SOLO, glm::vec2(600.0f - (200.0f / 2.0f), 220.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("solo")));
 	startMenu->addMenuItem(new MenuItem(MenuItem::ItemType::PVP, glm::vec2(600.0f - (200.0f / 2.0f), 370.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("pvp")));
 	startMenu->init();
@@ -28,6 +30,7 @@ MenuState::MenuState(Game& game) : GameState(game) {
 
 void MenuState::update() {
 	Menu& activeMenu = *game.menus.top();
+	activeMenu.update(game.mticks());
 	auto event = InputHandler::handleInput();
 	if (event == nullptr) { return; }
 	switch (event->eventType) {
@@ -41,21 +44,6 @@ void MenuState::update() {
 		selectMenuOption(*activeMenu.selectedItem);
 		break;
 	}
-	//switch (stoi(input)) {
-	//	case 1://PLAYER		
-	//		game.mode = GameParams::Mode::PVP;
-	//		game.net->ConnectToRandomOpponent(game.networkStartIp);
-	//		game.opponent = new Player(Player::Type::HUMAN);
-	//		if (game.net->peerType == Peer::PeerType::HOSTING_PEER) {
-	//			game.activePlayer = game.player;
-	//			game.inactivePlayer = game.opponent;
-	//		}
-	//		else if (game.net->peerType == Peer::PeerType::CONNECTING_PEER) {
-	//			game.activePlayer = game.opponent;
-	//			game.inactivePlayer = game.player;
-	//		}
-	//		break;
-	//	}
 }
 
 void MenuState::render() {
@@ -64,8 +52,6 @@ void MenuState::render() {
 
 	game.menuWater->draw(*game.waterRenderer);
 	game.menus.top()->draw();
-
-
 }
 
 void MenuState::selectMenuOption(MenuItem& menuItem) {

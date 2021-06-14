@@ -3,6 +3,12 @@
 #include "InputHandler.h"
 #include "Marker.h"
 
+MultiPlayerPlayState::MultiPlayerPlayState(Game& game) : GameState(game) 
+{ 
+	game.player->board->addObserver(&game);
+}
+
+
 void MultiPlayerPlayState::update() {
 	Player* player = game.player;
 	Player* opponent = game.opponent;
@@ -41,10 +47,10 @@ void MultiPlayerPlayState::update() {
 			std::pair<int, int> oppGuess = { buffer.xChoordGuess, buffer.yChoordGuess };
 			bool opponentHit = player->board->guess(oppGuess);
 
-			if (opponentHit) {
+		/*	if (opponentHit) {
 				game.spawnFire(oppGuess);
 				game.shakeScreen();
-			}
+			}*/
 
 			int resp = 0;
 			if (player->board->activeShips.empty()) {
@@ -93,7 +99,7 @@ void MultiPlayerPlayState::render() {
 	//Draw miss markers where opponent guessed wrong
 	for(auto square : game.player->board->guessedSquares){
 		if (!square.occupied) {
-			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
+			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * Game::SQUARE_PIXEL_SIZE, square.row * Game::SQUARE_PIXEL_SIZE));
 			miss.draw(*game.spriteRenderer);
 		}
 	}

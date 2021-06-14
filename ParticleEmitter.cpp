@@ -3,10 +3,10 @@
 #include <cmath>
 #include <random>
 #include <chrono>
-#include "GameParams.h"
+#include "Game.h"
 
 ParticleEmitter::ParticleEmitter(Shader shader, Texture2D texture, unsigned int amount, glm::vec2 square, glm::vec4 startColor, glm::vec4 endColor, unsigned int glBlendSrc, unsigned int glBlendDst) :
-	shader(shader), texture(texture), amountOfParticles(amount), emmiterSquare(square), emmiterPosition(glm::vec2(square.y * GameParams::SQUARE_PIXEL_SIZE + 600, square.x * GameParams::SQUARE_PIXEL_SIZE)), 
+	shader(shader), texture(texture), amountOfParticles(amount), emmiterSquare(square), emmiterPosition(glm::vec2(square.y * Game::SQUARE_PIXEL_SIZE + 600, square.x * Game::SQUARE_PIXEL_SIZE)), 
 		startColor(startColor), endColor(endColor), glBlendSrc(glBlendSrc), glBlendDst(glBlendDst){
 	this->init();
 }

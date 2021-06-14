@@ -6,10 +6,15 @@
 #include "Peer.h"
 
 MultiPlayerSetup::MultiPlayerSetup(Game& game) : GameState(game) {
-	
+	text.color = glm::vec4(1.0f, 0.1f, 0.3f, 1.0f);
+	text.setFlashing(true);
+	text.setBouncing(true);
+	text.scale(.7);
 }
 
 void MultiPlayerSetup::update() {
+	text.update(game.mticks());
+
 	Player* player = game.player;
 	if (player->ships.empty()) {
 		game.state = new MultiPlayerPlayState(game);
@@ -45,9 +50,6 @@ void MultiPlayerSetup::update() {
 	}
 	}
 
-
-
-
 }
 
 void MultiPlayerSetup::render() {
@@ -61,6 +63,8 @@ void MultiPlayerSetup::render() {
 	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 	game.grid->draw(*game.gridRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	text.draw(*game.spriteRenderer);
 
 	//draw placed ships on player's board
 	for (auto& ship : game.player->board->activeShips) {

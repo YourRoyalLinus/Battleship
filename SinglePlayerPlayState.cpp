@@ -3,38 +3,58 @@
 #include "Marker.h"
 #include "Game.h"
 
+SinglePlayerPlayState::SinglePlayerPlayState(Game& game) : GameState(game) 
+{
+	game.player->board->addObserver(&game);
+	//turnPrompt.color = glm::vec4(0.2f, 1.0f, 0.6f, 1.0f);
+	//turnPrompt.scale(.75);
+	//turnPrompt.setBouncing(true);
+	//turnPrompt.setFadeOut(true);
+}
+
 void SinglePlayerPlayState::update() {
-	Player* player = game.player;
-	Player* opponent = game.opponent;
-	Player* activePlayer = game.activePlayer;
+	Player& player = *game.player;
+	Player& opponent = *game.opponent;
+	Player& activePlayer = *game.activePlayer;
 	
-	if (activePlayer == player) {
+	if (game.activePlayer == game.player) {
+	//	turnPrompt.update(game.mticks());
+
 		Event* event = InputHandler::handleInput();
 		if (event == nullptr) { return; }
 		else if (event->eventType == Event::Type::LEFT_CLICK) {
-			player->guess(*opponent);
+			player.guess(opponent);
 			game.endTurn();
 		}
+		delete event;
 	}
-	else if (activePlayer == opponent) {
-		opponent->guess(*player);
+	else if (game.activePlayer == game.opponent) {
+		opponent.guess(player);
 		game.endTurn();
 	}
 
-	if (player->board->activeShips.empty()) {
+	if (player.board->activeShips.empty()) {
 		std::cout << "Computer Won!" << std::endl;
 		//TODO: CHANGE THIS!!
 		exit(0);
 	}
-	else if (opponent->board->activeShips.empty()) {
+	else if (opponent.board->activeShips.empty()) {
 		std::cout << "You've Won!" << std::endl;
 		exit(0);
 	}
+
 }
 
 void SinglePlayerPlayState::render() {
 	game.renderRadarPings();
 	//update uniforms
+	if (game.activePlayer == game.player) {
+		ResourceManager::getShader("radar2").use().setFloat("turn", 1.0f);
+	}
+	else {
+		ResourceManager::getShader("radar2").use().setFloat("turn", 0.0f);
+	}
+
 	ResourceManager::getShader("grid").use().setFloat("iTime", game.mticks());
 	ResourceManager::getShader("water").use().setFloat("iTime", game.mticks());
 	//testing new radar effect.
@@ -47,11 +67,15 @@ void SinglePlayerPlayState::render() {
 	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 	game.grid->draw(*game.gridRenderer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//if (game.activePlayer == game.player) {
+	//	turnPrompt.draw(*game.spriteRenderer);
+	//}
 	
 	//Draw miss markers where opponent guessed wrong
 	for(auto square : game.player->board->guessedSquares){
 		if (!square.occupied) {
-			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
+			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * Game::SQUARE_PIXEL_SIZE, square.row * Game::SQUARE_PIXEL_SIZE));
 			miss.draw(*game.spriteRenderer);
 		}
 	}

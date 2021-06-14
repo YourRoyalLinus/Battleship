@@ -1,5 +1,4 @@
 #pragma once
-#include "GameParams.h"
 #include "Board.h"
 #include "GuessStrategy.h"
 #include <functional>

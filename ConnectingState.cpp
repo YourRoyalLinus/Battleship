@@ -7,6 +7,7 @@ ConnectingState::ConnectingState(Game& game) : GameState(game) {}
 
 void ConnectingState::update() {
 	if (searching) {
+		text = new UIComponent(UIComponent::Alignment::CENTER, ResourceManager::getTexture("searching"), 1.0f);
 		if (game.net->searchForOpponent(game.networkStartIp)) {
 			//someone was already hosting a game
 			game.activePlayer = game.opponent;
@@ -16,6 +17,8 @@ void ConnectingState::update() {
 		else {
 			searching = false;
 			game.net->hostGame();
+			text = new UIComponent(UIComponent::Alignment::CENTER, ResourceManager::getTexture("waiting"), 1.0f);
+			text->setBouncing(true);
 		}
 	}
 	else {
@@ -25,10 +28,18 @@ void ConnectingState::update() {
 			game.inactivePlayer = game.opponent;
 			game.state = new MultiPlayerSetup(game);
 		}
+		text->update(game.mticks());
 	}
 
 }
 
 void ConnectingState::render() {
 	std::cout << "Waiting for another player..." << std::endl;
+	ResourceManager::getShader("water").use().setFloat("iTime", game.mticks());
+	ResourceManager::getShader("radar2").use().setFloat("time", game.mticks());
+	game.menuWater->draw(*game.waterRenderer);
+	if (text != nullptr) {
+		text->draw(*game.spriteRenderer);
+	}
+
 }

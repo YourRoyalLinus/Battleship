@@ -8,16 +8,17 @@
 
 
 Ship::Ship(Type type): type(type), length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0) {
+	//Entity gfx stuff
 	std::string shipName = sprites[type];
-	if(shipName == "destroyer")
-		normalMap = ResourceManager::getTexture(shipName + "NormalMap");
 	sprite = ResourceManager::getTexture(sprites[type]);
 	size = glm::vec2(length * Board::SQUARE_PIXEL_SIZE, Board::SQUARE_PIXEL_SIZE);
+	tex2 = ResourceManager::getTexture("sunGradient");
+
+
 	for (int i = 0; i <= length; i++) {
 		coords.push_back({ 0,i });
 	}
 }
-
 
 
 /* Utility to make moving coords easier */
@@ -57,14 +58,10 @@ void Ship::snapToPosition(std::pair<int,int> newPosition) {
 
 
 void Ship::rotate() {
-//	std::pair<int, int> pivot = coords[0];
-//	std::vector<std::pair<int, int>> relativeCoords = getCoordsRelativeToPivot(pivot);
 	std::pair<std::pair<int, int>, std::pair<int, int>> rotationMatrix = { { 0 , 1}, { -1, 0 } };
 	for (auto& coord : coords) {
 		auto localCoord = vectorMatrixProduct2(coord, rotationMatrix);
-//		coord = localCoord + pivot;
 	}
-	//coords = relativeCoords;
 	orientation = static_cast<Orientation>((static_cast<int>(orientation) + 1) % 4);
 
 	rotation -= 90 % 360;
@@ -72,13 +69,9 @@ void Ship::rotate() {
 
 }
 
-
 void Ship::draw(SpriteRenderer& renderer) {
-	//TODO: Code is trash! I'm passing the water texture when drawing the ship so that the ships get brightened by the same gradient that the water does!
-	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2),
-		ResourceManager::getTexture("sunGradient"));
+	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(Board::SQUARE_PIXEL_SIZE / 2, Board::SQUARE_PIXEL_SIZE / 2), tex2);
 }
-
 
 
 //TODO: This bit of linear algebra code can probably be put somewhere else but the ship is the only thing in the game that rotates so for now its here.

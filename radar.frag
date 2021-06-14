@@ -12,6 +12,8 @@ uniform vec2 resolution;
 uniform float glowStrength;
 uniform vec3 color;
 
+uniform float turn;
+
 uniform sampler2D image;
 uniform sampler2D pings;
 
@@ -40,5 +42,9 @@ void main(void) {
     y = pow(y, 1.0 / glowStrength );
 
     vec4 pings = texture(pings, vec2(TexCoord.x, -TexCoord.y));
-    FragColor = vec4(sqrt(y) * color , 1.0) * (texture(image,TexCoord) + (sqrt(y) * pings));
+    FragColor = vec4(sqrt(y) * color , 1.0) * (texture(image,TexCoord) + ((sqrt(y) + .3) * pings));
+    
+    FragColor += turn * vec4((smoothstep(0.0, 1.0, dc/4) * color) * (sin(time * 3.0) + 1.0)/2.0 , 1.0);
+
+    
 }

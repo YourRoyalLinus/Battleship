@@ -12,10 +12,10 @@ const glm::vec2 Board::SIZE = glm::vec2(600.0f, 600.0f);
 Board::Board(Type type) : type(type), Entity(type == Type::WATER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::WATER ? "water" : "radar")) {
 	//TODO: CLEAN THIS UP
 	if (type == Type::WATER) {
-		waveMap = ResourceManager::getTexture("waveMap");
+		tex2 = ResourceManager::getTexture("waveMap");
 	}
 	else if (type == Type::RADER) {
-		waveMap = ResourceManager::getTexture("pings");
+		tex2 = ResourceManager::getTexture("pings");
 	}
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
@@ -193,9 +193,9 @@ void Board::damageHitShip(std::pair<int,int> coord) {
 //	std::cout << sinker << " has sunk " << sinkee << "'s " << shipType << "!" << std::endl;
 //}
 
-void Board::draw(SpriteRenderer& spriteRenderer) {
-	spriteRenderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(0), this->waveMap);
-}
+//void Board::draw(SpriteRenderer& spriteRenderer) {
+//	spriteRenderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(0), this->waveMap);
+//}
 
 Board::~Board() {
 

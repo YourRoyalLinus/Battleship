@@ -1,7 +1,4 @@
 #pragma once
-#include "PeerNetwork.h"
-#include "ConnectingPeer.h"
-#include "HostingPeer.h"
 #include "SpriteRenderer.h"
 #include "Player.h"
 #include "ParticleEmitter.h"
@@ -9,34 +6,29 @@
 #include "GameState.h"
 #include "Observer.h"
 #include "Menu.h"
+#include "PeerNetwork.h"
+#include "ConnectingPeer.h"
+#include "HostingPeer.h"
+
 
 class Game : public Observer
 {
-	public:
+public:
 
-	PeerNetwork* net;
-	GameParams::Mode mode;
-	Player* player;
-	Player* opponent;
+	static const int SCREEN_WIDTH = 1200;
+	static const int SCREEN_HEIGHT = 600;
 
-	Entity* grid;
-	Entity* menuWater;
-	
-	SpriteRenderer* waterRenderer;
-	SpriteRenderer* spriteRenderer;
-	SpriteRenderer* radarBoardRenderer;
-	SpriteRenderer* gridRenderer;
-	SpriteRenderer* shipRenderer;
-	
-	PostProcessor* effects;
-
-	Player* activePlayer;
-	Player* inactivePlayer;
+	static const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
+	static const int SQUARE_PIXEL_HEIGHT = 75;
 
 	Game();
 	~Game();
 
-
+	PeerNetwork* net;
+	Player* player, *opponent, *activePlayer, *inactivePlayer;
+	Entity* grid, *menuWater;
+	SpriteRenderer* waterRenderer, *spriteRenderer, *radarBoardRenderer, *gridRenderer, *shipRenderer;
+	PostProcessor* effects;
 	GameState* state;
 
 	std::stack<Menu*> menus;
@@ -72,18 +64,11 @@ class Game : public Observer
 	//Remove fire emitters that were on a ship which sank
 	void removeUnderwaterFire();
 
-	//Ship the palyer is placing;
-	Ship* shipToPlace;
-
 	//TODO: move this to a more sensible place.
 	float shakeTime;
 
 	std::vector<ParticleEmitter> fireEmitters;
 	std::vector<ParticleEmitter> smokeEmitters;
-
-	bool hackFlag = false;
-
-
 
 };
 

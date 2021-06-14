@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "UIComponent.h"
 class ConnectingState : public GameState
 {
 public:
@@ -9,6 +10,7 @@ public:
 private:
 	//THIS IS SO HACKY
 	bool searching = true;
-	//float timeSearching = 0.0f;
+	UIComponent* text = nullptr;
+	
 };
 

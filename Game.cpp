@@ -34,7 +34,7 @@ void Game::init() {
 	ResourceManager::loadShader("postprocessing.vert", "postprocessing.frag", "postprocessing");
 
 	//Create Orthographic Projection Matrix
-	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(GameParams::SCREEN_WIDTH), static_cast<float>(GameParams::SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
 	//Configure shaders
 	ResourceManager::getShader("water").use().setInt("image", 0);
 	ResourceManager::getShader("water").setInt("waveMap", 1);
@@ -58,6 +58,8 @@ void Game::init() {
 	ResourceManager::getShader("radar2").setVec3("color", glm::vec3(0.0f, 0.6431372549019608f, 0.09019607843137255f)); //green
 	ResourceManager::getShader("radar2").setFloat("fillStrength", 0.3f);
 	ResourceManager::getShader("radar2").setVec2("resolution", glm::vec2(600.0f, 600.0f));
+	ResourceManager::getShader("radar2").setFloat("turn", 0.0f);
+
 
 	//Load Textures
 	// --Menu stuff--
@@ -68,6 +70,12 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\Medium.png", GL_RGBA, GL_RGBA, "medium");
 	ResourceManager::loadTexture("Textures\\Hard.png", GL_RGBA, GL_RGBA, "hard");
 	ResourceManager::loadTexture("Textures\\Back.png", GL_RGBA, GL_RGBA, "back");
+	ResourceManager::loadTexture("Textures\\Waiting.png", GL_RGBA, GL_RGBA, "waiting");
+	ResourceManager::loadTexture("Textures\\Searching.png", GL_RGBA, GL_RGBA, "searching");
+	ResourceManager::loadTexture("Textures\\Cursor.png", GL_RGBA, GL_RGBA, "cursor");
+	ResourceManager::loadTexture("Textures\\PlaceShips.png", GL_RGBA, GL_RGBA, "placeShips");
+	ResourceManager::loadTexture("Textures\\YourTurn.png", GL_RGBA, GL_RGBA, "yourTurn");
+	ResourceManager::loadTexture("Textures\\OppTurn.png", GL_RGBA, GL_RGBA, "oppTurn");
 
 	// --grids--
 	ResourceManager::loadTexture("Textures\\WaterGrid2.png", GL_RGBA, GL_RGBA, "grid");
@@ -95,7 +103,7 @@ void Game::init() {
 
 
 	
-	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), GameParams::SCREEN_WIDTH, GameParams::SCREEN_HEIGHT);
+	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
 	gridRenderer = new SpriteRenderer(ResourceManager::getShader("grid"));
@@ -105,12 +113,7 @@ void Game::init() {
 
 	grid = new Entity(glm::vec2(600.0f, 0.0f), glm::vec2(600.0f, 600.0f), ResourceManager::getTexture("grid"));
 	menuWater = new Entity(glm::vec2(0.0f, 0.0f), glm::vec2(1200.0f, 600.0f), ResourceManager::getTexture("water"));
-
-
-	//INIT game state
-	/*player = new Player(Player::Type::HERO);
-	player->board->addObserver(this);*/
-
+	menuWater->tex2 = ResourceManager::getTexture("waveMap");
 
 	state = new MenuState(*this);
 }
@@ -138,64 +141,7 @@ void Game::update(float dt) {
 
 
 void Game::render(float dt) {
-	state->render();
-	//renderRadarPings();
-
-	////update uniforms
-	//ResourceManager::getShader("grid").use().setFloat("iTime", mticks());
-	//ResourceManager::getShader("water").use().setFloat("iTime", mticks());
-
-	////testing new radar effect.
-	////TODO: these don't need to be done with uniforms right now.
-	//ResourceManager::getShader("radar2").use().setFloat("time", mticks());
-
-	////Render to off-screen buffer for postprocessing effects
-	//effects->beginRender();
-
-	//opponent->board->draw(*radarBoardRenderer);
-	//player->board->draw(*waterRenderer);
-	//glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
-	//grid->draw(*gridRenderer);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//
-
-	////Draw miss markers where opponent guessed wrong
-	//for(auto square : player->board->guessedSquares){
-	//	if (!square.occupied) {
-	//		Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
-	//		miss.draw(*spriteRenderer);
-	//	}
-	//}
-
-	////draw placed ships on player's board
-	//for (auto& ship : player->board->activeShips) {
-	//	ship.draw(*shipRenderer);
-	//}
-	//
-	//for (auto& fireEmitter : fireEmitters) {
-	//	fireEmitter.draw();
-	//}
-	//for (auto& smokeEmitter : smokeEmitters) {
-	//	smokeEmitter.draw();
-	//}
-
-	////draw placing ship if you are in setup
-	//if (setup) {
-	//	if (!player->ships.empty())
-	//		shipToPlace = &(player->ships.back());
-
-	//	//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
-	//	if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f) {
-	//		shipToPlace->draw(*shipRenderer);		
-	//	}
-	//}	
-
-	//removeUnderwaterFire();
-
-	////after redering whole scene to off-screen buffer, apply postprocessing affects and blit to screen.
-	//effects->endRender();
-	//effects->render(shakeTime);
-	
+	state->render();	
 }
 
 
@@ -228,7 +174,6 @@ void Game::removeUnderwaterFire() {
 	}
 }
 
-
 void Game::renderRadarPings() {
 	//render radar information to offscreen buffer based of hit's and misses from player.
 	unsigned int FBO;
@@ -245,15 +190,16 @@ void Game::renderRadarPings() {
 	//now actually render to the texture.
 	for (auto square : opponent->board->guessedSquares) {
 		if (square.occupied) {
-			Marker hit(Marker::Type::RADAR_HIT, glm::vec2(square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
+			Marker hit(Marker::Type::RADAR_HIT, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
 			hit.draw(*spriteRenderer);
 		}
 		else {
-			Marker miss(Marker::Type::RADAR_MISS, glm::vec2(square.col * GameParams::SQUARE_PIXEL_SIZE, square.row * GameParams::SQUARE_PIXEL_SIZE));
+			Marker miss(Marker::Type::RADAR_MISS, glm::vec2(square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
 			miss.draw(*spriteRenderer);
 		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &FBO);
 }
 
 float Game::mticks()
@@ -280,6 +226,5 @@ void Game::onNotify(Event* event) {
 	case Event::Type::SHIP_SANK: { break; }
 	default: { break; }
 	}
-	
-
+	delete event;
 }

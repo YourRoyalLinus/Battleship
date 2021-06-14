@@ -3,7 +3,7 @@
 #include <string>
 #include "ResourceManager.h"
 #include "Entity.h"
-#include "GameParams.h"
+#include "Game.h"
 
 class Marker : public Entity {
 
@@ -17,7 +17,7 @@ class Marker : public Entity {
 
 		static std::map<Type, std::string> sprites;
 	
-	Marker(Type type, glm::vec2 pos) : Entity(pos, glm::vec2(GameParams::SQUARE_PIXEL_SIZE), ResourceManager::getTexture(sprites[type])) { /* ... */ }
+	Marker(Type type, glm::vec2 pos) : Entity(pos, glm::vec2(Game::SQUARE_PIXEL_SIZE), ResourceManager::getTexture(sprites[type])) { /* ... */ }
 };
 
 

@@ -147,7 +147,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PeerNetwork.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
-    <ClCompile Include="RepositionShipCommand.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Ship.cpp" />
@@ -158,6 +157,7 @@
     <ClCompile Include="Square.cpp" />
     <ClCompile Include="stb_configs.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="UIComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
@@ -168,7 +168,6 @@
     <ClInclude Include="GuessStrategy.h" />
     <ClInclude Include="HostingPeer.h" />
     <ClInclude Include="EasyComputer.h" />
-    <ClInclude Include="GameParams.h" />
     <ClInclude Include="HardComputer.h" />
     <ClInclude Include="Payload.h" />
     <ClInclude Include="Peer.h" />
@@ -201,6 +200,7 @@
     <ClInclude Include="Square.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="UIComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\Battleship.png" />
