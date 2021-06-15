@@ -13,7 +13,25 @@
 #include "Marker.h"
 #include <thread>
 
-Game::Game(){
+
+/* TODOS:
+	- Fix guessing same square multiple times bug.
+	- Fix being able to guess square outside grid bug.
+	- Fix? memory leak during play state. I think its the markers
+	- Flesh out event system
+	- General cleanup
+	- Reorganize Files
+
+	Maybe:
+	- Rework Multiplayer turn logic
+	- Add GameOver Screen
+	- Add Audio
+	- Add more upcummies
+	- Create Sprite sheet to try and cut down on memory usage
+	- Make gameplay smoother (visuals, delay action from player/opponent etc.)
+*/
+
+Game::Game() {
 }
 
 Game::~Game() {
@@ -102,12 +120,12 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
 
 
-	
+
 	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
 	gridRenderer = new SpriteRenderer(ResourceManager::getShader("grid"));
-    spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
+	spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
 	shipRenderer = new SpriteRenderer(ResourceManager::getShader("ship"));
 
@@ -120,13 +138,11 @@ void Game::init() {
 
 void Game::update(float dt) {
 	state->update();
-
-	
-	for (auto fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
-		fireEmitter->update(dt, 8, glm::vec2(35.0f));
+	for (auto& fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
+		fireEmitter->update(dt, 4, glm::vec2(35.0f));
 	}
 	for (auto& smokeEmitter : smokeEmitters) {
-		smokeEmitter.update(dt, 3, glm::vec2(35.0f, 15.0f));
+		smokeEmitter.update(dt, 2, glm::vec2(35.0f, 15.0f));
 	}
 
 	//update postprocessing effects
@@ -141,13 +157,13 @@ void Game::update(float dt) {
 
 
 void Game::render(float dt) {
-	state->render();	
+	state->render();
 }
 
 
-void Game::spawnFire(std::pair<int,int> square) {
+void Game::spawnFire(std::pair<int, int> square) {
 	glm::vec2 squarePos = glm::vec2(square.first, square.second);
-	ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 1000, squarePos, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
+	ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 500, squarePos, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
 	ParticleEmitter smokeEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 300, squarePos, glm::vec4(0.2, 0.2, 0.2, 0.05), glm::vec4(0.0, 0.0, 0.0, 0.0),
 		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	fireEmitters.push_back(fireEmitter);
@@ -159,9 +175,9 @@ void Game::removeUnderwaterFire() {
 	//This logic is pretty gnarly because removing an iterator invalidates the iterator.
 	auto fireEmitter = fireEmitters.begin();
 	auto smokeEmitter = smokeEmitters.begin();
-	while (fireEmitter != fireEmitters.end()) 
+	while (fireEmitter != fireEmitters.end())
 	{
-		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y};
+		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y };
 		if (!player->board->squareOccupied(emmiterPos)) {
 			fireEmitter = fireEmitters.erase(fireEmitter);
 			smokeEmitter = smokeEmitters.erase(smokeEmitter);
@@ -175,7 +191,6 @@ void Game::removeUnderwaterFire() {
 }
 
 void Game::renderRadarPings() {
-	//render radar information to offscreen buffer based of hit's and misses from player.
 	unsigned int FBO;
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -183,8 +198,8 @@ void Game::renderRadarPings() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ResourceManager::getTexture("pings").ID, 0);
 	//check if FBO is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::RADAR PINGS: Failed to initialize FBO" << std::endl;
-    
+		std::cout << "ERROR::RADAR PINGS: Failed to initialize FBO" << std::endl;
+
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//now actually render to the texture.
@@ -204,12 +219,12 @@ void Game::renderRadarPings() {
 
 float Game::mticks()
 {
-    typedef std::chrono::high_resolution_clock clock;
-    typedef std::chrono::duration<float, std::milli> duration;
+	typedef std::chrono::high_resolution_clock clock;
+	typedef std::chrono::duration<float, std::milli> duration;
 
-    static clock::time_point start = clock::now();
-    duration elapsed = clock::now() - start;
-    return elapsed.count() / 1000;
+	static clock::time_point start = clock::now();
+	duration elapsed = clock::now() - start;
+	return elapsed.count() / 1000;
 }
 
 void Game::onNotify(Event* event) {

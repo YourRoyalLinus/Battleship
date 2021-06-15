@@ -1,15 +1,8 @@
 #pragma once
-#include "GameState.h"
-#include "Player.h"
-#include "UIComponent.h"
-#include "ResourceManager.h"
+#include "SetupState.h"
 
-class SinglePlayerSetup : public GameState {
+class SinglePlayerSetup : public SetupState {
 public:
 	SinglePlayerSetup(Game& game);
 	void update() override;
-	void render() override;
-
-private:
-	UIComponent text = UIComponent(UIComponent::Alignment::TOP_RIGHT, ResourceManager::getTexture("placeShips"), 1.0f);
 };

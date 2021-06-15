@@ -126,10 +126,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="ComputerShipPlacement.cpp" />
     <ClCompile Include="ConnectingState.cpp" />
     <ClCompile Include="HostingPeer.cpp" />
     <ClCompile Include="EasyComputer.cpp" />
     <ClCompile Include="HardComputer.cpp" />
+    <ClCompile Include="HumanShipPlacement.cpp" />
+    <ClCompile Include="PlayState.cpp" />
+    <ClCompile Include="SetupState.cpp" />
     <ClCompile Include="SinglePlayerGuess.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Marker.cpp" />
@@ -162,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="ComputerGuessStrategy.h" />
+    <ClInclude Include="ComputerShipPlacement.h" />
     <ClInclude Include="ConnectingState.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="GameState.h" />
@@ -169,9 +174,14 @@
     <ClInclude Include="HostingPeer.h" />
     <ClInclude Include="EasyComputer.h" />
     <ClInclude Include="HardComputer.h" />
+    <ClInclude Include="HumanShipPlacement.h" />
+    <ClInclude Include="NullPlacement.h" />
     <ClInclude Include="Payload.h" />
     <ClInclude Include="Peer.h" />
     <ClInclude Include="PeerNetwork.h" />
+    <ClInclude Include="PlayState.h" />
+    <ClInclude Include="SetupState.h" />
+    <ClInclude Include="ShipPlacementStrategy.h" />
     <ClInclude Include="SinglePlayerGuess.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MediumComputer.h" />
@@ -185,7 +195,7 @@
     <ClInclude Include="MultiPlayerGuess.h" />
     <ClInclude Include="MultiPlayerPlayState.h" />
     <ClInclude Include="MultiPlayerSetup.h" />
-    <ClInclude Include="NullStrategy.h" />
+    <ClInclude Include="NullGuess.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Player.h" />

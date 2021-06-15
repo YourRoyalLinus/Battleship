@@ -7,73 +7,58 @@
 #include "EasyComputer.h"
 #include "MediumComputer.h"
 #include "HardComputer.h"
-#include "NullStrategy.h"
+#include "NullPlacement.h"
+#include "NullGuess.h"
+#include "HumanShipPlacement.h"
+#include "ComputerShipPlacement.h"
+#include "MultiPlayerGuess.h"
 
 
-Player::Player(Type type, GuessStrategy* guessStrategy) : guessStrategy(guessStrategy) {
-	if (type == Type::HERO) {
-		this->board = new Board(Board::Type::WATER);
-	}
-	else {
-		this->board = new Board(Board::Type::RADER);
-	}
 
-	//TODO: There has got to be a better way of doing this than creating these lambdas here, but idk what I'm doing
-	auto humanShipPlacement = [this]() {
-		if (this->board->placeShip(*shipToPlace, shipToPlace->coords)) {
-				this->ships.pop_back();
-				if(!ships.empty())
-					this->shipToPlace = &this->ships.back();
-				this->board->print();
-				std::cout << "\n\n" << std::endl;
-		}
-		};
-
-	auto computerShipPlacement = [this]() {
-		do {
-			//If placing failed generate new coords & try again
-			int row = rand() % 8;
-			int col = rand() % 8;
-			shipToPlace->snapToPosition({ row, col });
-		} while (!this->board->placeShip(*shipToPlace, shipToPlace->coords));
-		this->ships.pop_back();
-		if(!ships.empty())
-			this->shipToPlace = &this->ships.back();
-		this->board->print();
-	};
-
-	switch (type) {
-	case Type::HERO: {
-		this->shipPlacementProc = humanShipPlacement;
-	//	this->guessStrategy = new SinglePlayerGuess();
-		break;
-	}
-	case Type::HUMAN_OPPONENT: {
-		this->shipPlacementProc = []() {};
-//		this->guessStrategy = new NullStrategy();
-	}
-	case Type::EASY_COMPUTER: {
-		this->shipPlacementProc = computerShipPlacement;
-	//	this->guessStrategy = new EasyComputer();
-		break;
-	}
-	case Type::MEDIUM_COMPUTER: {
-		this->shipPlacementProc = computerShipPlacement;
-	//	this->guessStrategy = new MediumComputer();
-		break;
-	}
-	case Type::HARD_COMPUTER: {
-		this->shipPlacementProc = computerShipPlacement;
-	//	this->guessStrategy = new HardComputer();
-		break;
-	}
-	default:
-		assert(false);
-		guessStrategy = new MediumComputer();
-		break;
-	}
-
-	shipToPlace = &ships.back();
-
+Player* Player::createHeroSinglePlayer() {
+	Player* player = new Player(new Board(Board::Type::WATER), new SinglePlayerGuess());
+	HumanShipPlacement* placementProc = new HumanShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
 }
 
+Player* Player::createHeroMultiPlayer(PeerNetwork& net) {
+	Player* player = new Player(new Board(Board::Type::WATER), new MultiPlayerGuess(net));
+	HumanShipPlacement* placementProc = new HumanShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}
+
+Player* Player::createHumanOpponent() {
+	Player* player = new Player(new Board(Board::Type::RADER), new NullGuess());
+	NullPlacement* placementProc = new NullPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}
+
+Player* Player::createEasyComputer() {
+	Player* player = new Player(new Board(Board::Type::RADER), new EasyComputer());
+	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}
+
+Player* Player::createMediumComputer() {
+	Player* player = new Player(new Board(Board::Type::RADER), new MediumComputer());
+	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}
+
+Player* Player::createHardComputer() {
+	Player* player = new Player(new Board(Board::Type::RADER), new MediumComputer());
+	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}

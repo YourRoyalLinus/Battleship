@@ -17,8 +17,7 @@ public:
 
 	static const int SCREEN_WIDTH = 1200;
 	static const int SCREEN_HEIGHT = 600;
-
-	static const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
+	static const int SQUARE_PIXEL_SIZE = 75;
 	static const int SQUARE_PIXEL_HEIGHT = 75;
 
 	Game();
@@ -47,7 +46,6 @@ public:
 		activePlayer = inactivePlayer;
 		inactivePlayer = temp;
 	}
-
 	//Spawn fire particle effect at specified square when the player gets hit
 	void spawnFire(std::pair<int,int> square);
 	//Screen shake post-processing effect that happens when the player gets hit
@@ -58,15 +56,13 @@ public:
 
 	//Returns seconds since epoch as float. Used to set uniforms.
 	float mticks();
-	
+	//Render radar hitmarkers to texture for radar frag shader to use
 	void renderRadarPings();
-
 	//Remove fire emitters that were on a ship which sank
 	void removeUnderwaterFire();
 
 	//TODO: move this to a more sensible place.
 	float shakeTime;
-
 	std::vector<ParticleEmitter> fireEmitters;
 	std::vector<ParticleEmitter> smokeEmitters;
 

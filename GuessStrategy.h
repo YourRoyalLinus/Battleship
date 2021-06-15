@@ -3,6 +3,6 @@
 
 class Player;
 class GuessStrategy {
-	public:
-		virtual void guess(Player& player, Player& opponent) = 0;
+public:
+	virtual void guess(Player& player, Player& opponent) = 0;
 };

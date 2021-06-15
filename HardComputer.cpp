@@ -60,7 +60,6 @@ void HardComputer::guess(Player& player, Player& opponent){
 		guess = { row, col };
 	} 
 	
-	int backtrack = 0;
 	while (guesses.size() < 64 && guesses.find(guess) != guesses.end()) {
 		if (adjGuessIx == 1) {
 			backtrack--;
