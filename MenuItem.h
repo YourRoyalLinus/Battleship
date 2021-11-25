@@ -9,6 +9,7 @@ public:
 		EASY,
 		MEDIUM,
 		HARD,
+		EXPERT,
 		BACK
 	};
 	//IDK if this is the right way to do this...

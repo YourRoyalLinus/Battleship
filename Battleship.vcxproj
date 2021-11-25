@@ -69,12 +69,12 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\David\vclib\cereal-1.3.0\include;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\stb-master;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jon\vclib\cereal-1.3.0\include;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\David\vclib\cereal-1.3.0\include;C:\Users\David\vclib\glad\include\KHR;C:\Users\David\vclib\glad\include\glad;C:\Users\David\vclib\glm-0.9.6.3\glm;C:\Users\David\vclib\stb-master;C:\Users\David\vclib\SDL2_image-2.0.5\include;C:\Users\David\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\David\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jon\vclib\cereal-1.3.0\include;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,6 +128,8 @@
     <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
     <ClCompile Include="ComputerShipPlacement.cpp" />
     <ClCompile Include="ConnectingState.cpp" />
+    <ClCompile Include="DiagonalOpeningStrategy.cpp" />
+    <ClCompile Include="ExpertComputer.cpp" />
     <ClCompile Include="HostingPeer.cpp" />
     <ClCompile Include="EasyComputer.cpp" />
     <ClCompile Include="HardComputer.cpp" />
@@ -168,7 +170,9 @@
     <ClInclude Include="ComputerGuessStrategy.h" />
     <ClInclude Include="ComputerShipPlacement.h" />
     <ClInclude Include="ConnectingState.h" />
+    <ClInclude Include="DiagonalOpeningStrategy.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="ExpertComputer.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GuessStrategy.h" />
     <ClInclude Include="HostingPeer.h" />
@@ -176,6 +180,7 @@
     <ClInclude Include="HardComputer.h" />
     <ClInclude Include="HumanShipPlacement.h" />
     <ClInclude Include="NullPlacement.h" />
+    <ClInclude Include="OpeningStrategy.h" />
     <ClInclude Include="Payload.h" />
     <ClInclude Include="Peer.h" />
     <ClInclude Include="PeerNetwork.h" />

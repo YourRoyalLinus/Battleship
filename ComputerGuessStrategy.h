@@ -7,10 +7,5 @@
 
 class ComputerGuessStrategy : public GuessStrategy{
 	public:
-		virtual void guess(Player& player, Player& opponent) = 0;
-
-	protected:
-		//Advanced calculations variables
-		std::pair<int, int> prevGuess;
-		std::set<std::pair<int, int>> guesses;
+		virtual void guess(Player& player, Player& opponent) = 0;		
 };

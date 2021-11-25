@@ -37,6 +37,11 @@ public:
 	/* Marked correct and incorrectly guessed squares when playing against another player */
 	void markSquare(const std::pair<int, int> coord, bool prevRes);
 
+	/*Check if the last guess by the Opponent sunk a ship*/
+	bool checkShipSank() {
+		return sunkShip;
+	}
+
 	/* A collection of ships active on the board. */
 	std::vector<Ship> activeShips;
 
@@ -55,7 +60,7 @@ private:
 
 	/* Deal damage to the ship at the current square */
 	void damageHitShip(std::pair<int, int> coord);
-
+	bool sunkShip;
 	/* Check if damage sunk ship and print to console */
 	//	void damageSankShip(Ship ship);
 	Type type;

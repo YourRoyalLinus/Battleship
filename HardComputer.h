@@ -1,17 +1,11 @@
 #pragma once
-#include "ComputerGuessStrategy.h"
+#include "AdvancedComputerGuessStrategy.h"
 
-class HardComputer : public ComputerGuessStrategy
+class HardComputer : public AdvancedComputerGuessStrategy
 {
 	public:
 		void guess(Player& player, Player& opponent) override;
-
-private:
-	bool hitStreak = false;
-	int adjGuessIx = -1;
-	int backtrack = 0;
-	const std::vector<std::pair<int, int>> adjacentGuesses = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
-	std::pair<int, int> lastHitSqaure;
+	private:
 };
 
 

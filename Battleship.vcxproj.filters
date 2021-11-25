@@ -150,6 +150,12 @@
     <ClCompile Include="UIComponent.cpp">
       <Filter>GFX</Filter>
     </ClCompile>
+    <ClCompile Include="ExpertComputer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiagonalOpeningStrategy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h">
@@ -292,6 +298,15 @@
     </ClInclude>
     <ClInclude Include="UIComponent.h">
       <Filter>GFX</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpertComputer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpeningStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagonalOpeningStrategy.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

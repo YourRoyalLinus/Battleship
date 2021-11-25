@@ -93,6 +93,10 @@ std::vector<Square> Board::occupiedSquares() {
 
 
 bool Board::guess(const std::pair<int, int> coord) {
+	if (sunkShip) {
+		sunkShip = false;
+	}
+
 	bool validSquare = validCoord(coord);
 	//If you tried to guess at an invalid position
 	if (!validSquare)
@@ -117,6 +121,9 @@ bool Board::guess(const std::pair<int, int> coord) {
 }
 
 bool Board::alreadyGuessedSquare(const std::pair<int, int> coord) {
+	if (!validCoord(coord)) {
+		return false;
+	}
 	for (auto sq : guessedSquares) {
 		if (sq.row == coord.first && sq.col == coord.second) {
 			return true;
@@ -153,6 +160,7 @@ void Board::damageHitShip(std::pair<int,int> coord) {
 				}
 				//damageSankShip(*currentShip);
 				currentShip = activeShips.erase(currentShip);
+				sunkShip = true;
 				break;
 			}
 		}

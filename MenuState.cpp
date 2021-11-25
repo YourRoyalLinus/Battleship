@@ -62,38 +62,36 @@ void MenuState::selectMenuOption(MenuItem& menuItem) {
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::EASY, glm::vec2(600.0f - (200.0f / 2.0f), 80.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("easy")));
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::MEDIUM, glm::vec2(600.0f - (200.0f / 2.0f), 180.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("medium")));
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::HARD, glm::vec2(600.0f - (200.0f / 2.0f), 280.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("hard")));
-		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::BACK, glm::vec2(600.0f - (200.0f / 2.0f), 380.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("back")));
+		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::EXPERT, glm::vec2(600.0f - (200.0f / 2.0f), 380.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("hard"))); //TODO: CREATE EXPERT TEXTURE
+		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::BACK, glm::vec2(600.0f - (200.0f / 2.0f), 480.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("back")));
 		difficultyMenu->init();
 		game.menus.push(difficultyMenu);
 		break;
 	}
 	case MenuItem::ItemType::PVP:
 		game.net = new PeerNetwork();
-		/*game.player = new Player(Player::Type::HERO, new MultiPlayerGuess(*game.net));
-		game.opponent = new Player(Player::Type::HUMAN_OPPONENT, new NullGuess());*/
 		game.player = Player::createHeroMultiPlayer(*game.net);
 		game.opponent = Player::createHumanOpponent();
 		game.state = new ConnectingState(game);
 		break;
 	case MenuItem::ItemType::EASY:
-	/*	game.player = new Player(Player::Type::HERO, new SinglePlayerGuess());
-		game.opponent = new Player(Player::Type::EASY_COMPUTER, new EasyComputer());*/
 		game.player = Player::createHeroSinglePlayer();
 		game.opponent = Player::createEasyComputer();
 		game.state = new SinglePlayerSetup(game);
 		break;
 	case MenuItem::ItemType::MEDIUM:
-	/*	game.player = new Player(Player::Type::HERO, new SinglePlayerGuess());
-		game.opponent = new Player(Player::Type::MEDIUM_COMPUTER, new MediumComputer());*/
 		game.player = Player::createHeroSinglePlayer();
 		game.opponent = Player::createMediumComputer();
 		game.state = new SinglePlayerSetup(game);
 		break;
 	case MenuItem::ItemType::HARD:
-		/*game.player = new Player(Player::Type::HERO, new SinglePlayerGuess());
-		game.opponent = new Player(Player::Type::HARD_COMPUTER, new HardComputer());*/
 		game.player = Player::createHeroSinglePlayer();
 		game.opponent = Player::createHardComputer();
+		game.state = new SinglePlayerSetup(game);
+		break;
+	case MenuItem::ItemType::EXPERT:
+		game.player = Player::createHeroSinglePlayer();
+		game.opponent = Player::createExpertComputer();
 		game.state = new SinglePlayerSetup(game);
 		break;
 	case MenuItem::ItemType::BACK:
