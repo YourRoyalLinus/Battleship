@@ -109,4 +109,3 @@ void DiagonalOpeningStrategy::guess(Player& player, Player& opponent) {
 		}
 	}
 }
-

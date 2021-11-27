@@ -5,7 +5,7 @@ class DiagonalOpeningStrategy : public OpeningStrategy
 {
 	public:
 		void guess(Player& player, Player& opponent) override;
-	private:
+	protected:
 		bool topDiagonalChecked = false;
 		bool bottomDiagonalChecked = false;
 		bool mainDiagonalChecked = false;

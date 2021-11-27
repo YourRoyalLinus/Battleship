@@ -1,33 +1,44 @@
 #pragma once
-#include "ComputerGuessStrategy.h"
-#include "OpeningStrategy.h"
+#include "AdvancedComputerGuessStrategy.h"
 #include "DiagonalOpeningStrategy.h"
-#include <queue>
+#include <stack>
 
-class ExpertComputer : public ComputerGuessStrategy
+class ExpertComputer : public AdvancedComputerGuessStrategy
 {
 	public:
 		ExpertComputer() {
-			_openStrat = new DiagonalOpeningStrategy();
+			openingStrategy = new DiagonalOpeningStrategy();
 		}
 		ExpertComputer(OpeningStrategy* strat) {
-			_openStrat = strat;
+			openingStrategy = strat;
 		}
 		~ExpertComputer() {
-			delete _openStrat;
-			_openStrat = 0;
+			delete openingStrategy;
+			openingStrategy = 0;
 		}
 		void guess(Player& player, Player& opponent) override;
 	protected:
-		OpeningStrategy* _openStrat;
+		OpeningStrategy* openingStrategy;
 	private:
-		bool hitStreak = false;
-		int consecutiveHits = 0;
-		int adjGuessIx = -1; //REMOVE COMPUTER DOUBLE-GUESSING
-		int backtrack = 0;
-		const std::vector<std::pair<int, int>> adjacentGuesses = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} }; //If you ever strike more than 1 time in one direction, and 0 times in the opposite direction, you've hit more than 1 ship
-		std::pair<int, int> lastHitSquare;
-		std::queue<std::pair<int, int>> possibleShips;
+		int hitsBetweenSinkingShips = 0;
+		bool adjacentShipFound = false;
+		std::stack<std::pair<int, int>> possibleShipStartCoords;
+
+		std::pair<int, int> GenerateRandomValidGuess();
+		std::pair<int, int> ContinueOnDirection();
+		std::pair<int, int> Backtrack(int& backtrack);
+
+		void Reset();
+		void ValidateGuess(std::pair<int, int>& guess);
+		
+
+		bool IsFirstHit();
+		bool SetNextDirection();
+		bool IsPossibleAdjacentShipCoord();
+		bool IsWithinBoundry(int row, int column);
+
+		bool SubmitGuess(std::pair<int, int> guess, Player& opponent);
+		
 };
 
 

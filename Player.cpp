@@ -12,6 +12,7 @@
 #include "NullGuess.h"
 #include "HumanShipPlacement.h"
 #include "ComputerShipPlacement.h"
+#include "ComputerShipPlacement.h"
 #include "MultiPlayerGuess.h"
 
 

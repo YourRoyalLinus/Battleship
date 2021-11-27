@@ -20,7 +20,7 @@ void SinglePlayerPlayState::update() {
 			int col = (InputHandler::mouseX) / Board::SQUARE_PIXEL_SIZE;
 
 			if (opponent.board->alreadyGuessedSquare({ row, col })) {
-				std::cout << "ROW: " << row << " COLUMN: " << col << " has already been guessed. Please Guess again." << std::endl;
+				std::cout << "ROW: " << row << " COLUMN: " << col << " has already been guessed. Please Guess again." << std::endl; //TODO MAKE GRAPHIC
 				return;
 			}
 
