@@ -24,7 +24,7 @@ void HostingPeer::ListenForOpponent() {
 	BindSocket();
 	Listen();
 
-	std::cout << "Waiting for an Opponent...\n";
+	std::cout << "Listening for an Opponent...\n";
 
 }
 

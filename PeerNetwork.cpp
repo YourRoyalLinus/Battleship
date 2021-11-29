@@ -15,7 +15,7 @@ bool PeerNetwork::searchForOpponent(std::string networkStartIP) {
 	cPeer = new ConnectingPeer();
 	gameSocket = cPeer->SearchForOpponent(networkStartIP);
 	if (gameSocket == INVALID_SOCKET) {
-		std::cout << WSAGetLastError() << std::endl;
+		//std::cout << WSAGetLastError() << std::endl;
 		return false;
 	}
 	else {
@@ -38,6 +38,9 @@ void PeerNetwork::hostGame() {
 bool PeerNetwork::findOpponent() {
 	WSAPOLLFD& hPeerFD = hPeer->getPollFD();
 	if (WSAPoll(&hPeerFD, 1, 1) > 0) {
+		if (hPeerFD.revents & POLLERR) {
+			std::cout << WSAGetLastError() << std::endl;
+		}
 		if (hPeerFD.revents & POLLRDNORM) {
 			gameSocket = hPeer->AcceptConnection();
 			playerPeer = hPeer;

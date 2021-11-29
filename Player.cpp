@@ -56,7 +56,7 @@ Player* Player::createMediumComputer() {
 }
 
 Player* Player::createHardComputer() {
-	Player* player = new Player(new Board(Board::Type::RADER), new MediumComputer());
+	Player* player = new Player(new Board(Board::Type::RADER), new HardComputer());
 	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
 	player->setPlacementStrategy(placementProc);
 	player->shipToPlace = &player->ships.back();

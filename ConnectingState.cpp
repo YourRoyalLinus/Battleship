@@ -34,7 +34,6 @@ void ConnectingState::update() {
 }
 
 void ConnectingState::render() {
-	std::cout << "Waiting for another player..." << std::endl;
 	ResourceManager::getShader("water").use().setFloat("iTime", game.mticks());
 	ResourceManager::getShader("radar2").use().setFloat("time", game.mticks());
 	game.menuWater->draw(*game.waterRenderer);
