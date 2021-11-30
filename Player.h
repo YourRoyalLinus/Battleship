@@ -14,6 +14,7 @@ public:
 	static Player* createEasyComputer();
 	static Player* createMediumComputer();
 	static Player* createHardComputer();
+	static Player* createExpertComputer();
 
 	void guess(Player& opponent) {	guessStrategy->guess(*this, opponent); }
 	void placeShip() { placementStrategy->place(); }

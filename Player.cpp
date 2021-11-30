@@ -7,9 +7,11 @@
 #include "EasyComputer.h"
 #include "MediumComputer.h"
 #include "HardComputer.h"
+#include "ExpertComputer.h"
 #include "NullPlacement.h"
 #include "NullGuess.h"
 #include "HumanShipPlacement.h"
+#include "ComputerShipPlacement.h"
 #include "ComputerShipPlacement.h"
 #include "MultiPlayerGuess.h"
 
@@ -57,6 +59,14 @@ Player* Player::createMediumComputer() {
 
 Player* Player::createHardComputer() {
 	Player* player = new Player(new Board(Board::Type::RADER), new HardComputer());
+	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
+	player->setPlacementStrategy(placementProc);
+	player->shipToPlace = &player->ships.back();
+	return player;
+}
+
+Player* Player::createExpertComputer() {
+	Player* player = new Player(new Board(Board::Type::RADER), new ExpertComputer());
 	ComputerShipPlacement* placementProc = new ComputerShipPlacement(*player);
 	player->setPlacementStrategy(placementProc);
 	player->shipToPlace = &player->ships.back();

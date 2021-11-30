@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <glm\glm.hpp>
+#include <glm.hpp>
 #include <glad.h>
 
 class Shader

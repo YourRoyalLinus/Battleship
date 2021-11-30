@@ -1,5 +1,5 @@
 #pragma once
-#include <glm\glm.hpp>
+#include <glm.hpp>
 #include "Texture2D.h"
 #include "SpriteRenderer.h"
 

@@ -4,7 +4,7 @@
 #include "Board.h"
 #include "Ship.h"
 #include "ResourceManager.h"
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 
 Ship::Ship(Type type): type(type), length(sizes[type]), orientation(Orientation::LEFT), hitsTaken(0) {

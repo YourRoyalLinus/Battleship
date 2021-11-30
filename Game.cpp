@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
-#include <glm\glm.hpp>
-#include <glm\ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp>
 #include <SDL.h>
 #include "Game.h"
 #include "ResourceManager.h"

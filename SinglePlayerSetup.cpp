@@ -7,7 +7,6 @@
 
 SinglePlayerSetup::SinglePlayerSetup(Game& game) : SetupState(game)
 {
-
 }
 
 void SinglePlayerSetup::update() {

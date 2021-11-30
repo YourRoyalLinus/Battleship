@@ -1,21 +1,48 @@
 #pragma once
-#include "HardComputer.h"
+#include "ExpertComputer.h"
 #include "Player.h"
 
 
-void HardComputer::guess(Player& player, Player& opponent){
+void ExpertComputer::guess(Player& player, Player& opponent) {
 	std::pair<int, int> guess;
+
+	if (openingStrategy->isOpeningPhase) { //Minor refactor for clarity
+		openingStrategy->guess(player, opponent);
+		prevGuess = openingStrategy->GetPrevGuess();
+		guesses.insert(prevGuess);
+		if(openingStrategy->isTransitionaryTurn) {
+			hitStreak = true;
+			lastHitSquare = prevGuess;
+		}
+		return;
+	}
 
 	if (opponent.board->checkShipSank()) {
 		Reset();
 	}
 	else if (hitStreak) {
 		hitSquares.push_back(prevGuess);
+		hitsBetweenSinkingShips++;
 		lastHitSquare = prevGuess;
 		seekingShip = true;
+
+		if (!adjacentShipFound) {
+			if (IsPossibleAdjacentShipCoord()) {
+				possibleShipStartCoords.push(prevGuess);
+			}	
+		}
 	}
-	
-	if (hitStreak && IsFirstHit()){
+
+	if (adjacentShipFound) {
+		possibleShipStartCoords.pop(); //Square of the initial ship, which we sunk
+		lastHitSquare = possibleShipStartCoords.top();
+		adjGuessIx = 2;
+		hitStreak = true;
+		seekingShip = true;
+		adjacentShipFound = false;
+	}
+
+	if (hitStreak && IsFirstHit()) {
 		if (SetNextDirection()) {
 			guess = ContinueOnDirection();
 			ValidateGuess(guess);
@@ -53,9 +80,10 @@ void HardComputer::guess(Player& player, Player& opponent){
 		guess = GenerateRandomValidGuess();
 		hitStreak = SubmitGuess(guess, opponent);
 	}
+	
 }
 
-std::pair<int, int> HardComputer::GenerateRandomValidGuess() {
+std::pair<int, int> ExpertComputer::GenerateRandomValidGuess(){
 	const int maxPossibleGuesses = 8 * 8; //Rows X Columns;
 	if (guesses.size() == maxPossibleGuesses) {
 		std::cout << "GAME OVER: ALL GUESSES HAVE BEEN MADE." << std::endl; //TODO MAKE GRAPHIC
@@ -72,7 +100,7 @@ std::pair<int, int> HardComputer::GenerateRandomValidGuess() {
 	return guess;
 }
 
-std::pair<int, int> HardComputer::ContinueOnDirection() {
+std::pair<int, int> ExpertComputer::ContinueOnDirection() {
 	std::pair<int, int> dir = adjacentGuesses[adjGuessIx];
 	int row = lastHitSquare.first + dir.first;
 	int col = lastHitSquare.second + dir.second;
@@ -80,12 +108,12 @@ std::pair<int, int> HardComputer::ContinueOnDirection() {
 	return { row, col };
 }
 
-std::pair<int, int> HardComputer::Backtrack(int& backtrack) {
+std::pair<int, int> ExpertComputer::Backtrack(int& backtrack) {
 	std::pair<int, int> dir;
 	int row;
 	int col;
 	std::pair<int, int> guess = prevGuess;
-	while (guesses.find(guess) != guesses.end()) {
+	while(guesses.find(guess) != guesses.end()){
 		backtrack--;
 		if (adjGuessIx == 1) {
 			dir = adjacentGuesses[adjGuessIx];
@@ -101,14 +129,14 @@ std::pair<int, int> HardComputer::Backtrack(int& backtrack) {
 
 			guess = { row, col };
 		}
-
+		
 	}
 
 	return guess;
 }
 
-void HardComputer::ValidateGuess(std::pair<int, int>& guess) {
-	if(!IsWithinBoundry(guess.first, guess.second)) {
+void ExpertComputer::ValidateGuess(std::pair<int, int>& guess) {
+	 if(!IsWithinBoundry(guess.first, guess.second)) {
 		if (SetNextDirection()) {
 			guess = ContinueOnDirection();
 		}
@@ -135,17 +163,29 @@ void HardComputer::ValidateGuess(std::pair<int, int>& guess) {
 	}
 }
 
-void HardComputer::Reset() {
-	seekingShip = false;
-	hitStreak = false;
-	adjGuessIx = -1;
+void ExpertComputer::Reset() {
+	if (hitsBetweenSinkingShips > 1 && adjGuessIx > 1 && possibleShipStartCoords.size() > 1) {
+		adjacentShipFound = true;	
+	}
+	else {
+		hitsBetweenSinkingShips = 0;
+		adjacentShipFound = false;
+		seekingShip = false;
+		hitStreak = false;
+		adjGuessIx = -1;
+		while (!possibleShipStartCoords.empty()) {
+			possibleShipStartCoords.pop();
+		}
+	}
+
+	
 }
 
-bool HardComputer::IsFirstHit() {
+bool ExpertComputer::IsFirstHit() {
 	return (adjGuessIx == -1);
 }
 
-bool HardComputer::IsWithinBoundry(int row, int column) {
+bool ExpertComputer::IsWithinBoundry(int row, int column) {
 	if (row < 0 || column < 0 || row > 7 || column > 7) {
 		return false;
 	}
@@ -154,8 +194,7 @@ bool HardComputer::IsWithinBoundry(int row, int column) {
 	}
 }
 
-
-bool HardComputer::SetNextDirection() {
+bool ExpertComputer::SetNextDirection() {
 	if (adjGuessIx == -1 && (lastHitSquare.first + 1) > 7) {
 		adjGuessIx++;
 	}
@@ -180,10 +219,22 @@ bool HardComputer::SetNextDirection() {
 
 }
 
-bool HardComputer::SubmitGuess(std::pair<int, int> guess, Player& opponent) {
+
+bool ExpertComputer::IsPossibleAdjacentShipCoord() {
+	if (hitsBetweenSinkingShips == 0) {
+		return false;
+	}
+	else if (adjGuessIx >= 2) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+bool ExpertComputer::SubmitGuess(std::pair<int, int> guess, Player& opponent) {
 	guesses.insert(guess);
 	prevGuess = guess;
 
 	return opponent.board->guess(guess);
 }
-

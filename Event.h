@@ -9,6 +9,7 @@ public:
 		ARROW_DOWN,
 		ARROW_UP,
 		ENTER,
+		DUPLICATE_GUESS,
 		PLAYER_HIT,
 		SHIP_SANK
 	};
@@ -33,6 +34,12 @@ public:
 class PlayerHit : public Event {
 public:
 	PlayerHit(std::pair<int, int> coord) : Event(Type::PLAYER_HIT), coord(coord) { /*...*/ }
+	std::pair<int, int> coord;
+};
+
+class DuplicateGuess : public Event {
+public: 
+	DuplicateGuess(std::pair<int, int> coord) : Event(Type::DUPLICATE_GUESS), coord(coord){/*...*/ }
 	std::pair<int, int> coord;
 };
 

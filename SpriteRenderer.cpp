@@ -1,5 +1,5 @@
 #pragma once
-#include <glm\ext.hpp>
+#include <ext.hpp>
 #include "SpriteRenderer.h"
 
 
