@@ -1,26 +1,42 @@
 #pragma once
 #include <chrono>
-#include <glm\glm.hpp>
-#include <glm\ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp>
 #include <SDL.h>
 #include "Game.h"
 #include "ResourceManager.h"
-#include "Marker.h"
 #include <stb_image.h>
 #include "Texture2D.h"
+#include "MenuState.h"
+#include "MenuItem.h"
+#include "SinglePlayerSetup.h"
+#include "Marker.h"
+#include <thread>
 
-Game::Game() : net(nullptr), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::SOLO), player(nullptr), opponent(nullptr),
-			  spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr){
-}
 
-Game::Game(PeerNetwork* network) : net(network), state(GameParams::State::SETUP), turn(GameParams::Turn::PLAYER), mode(GameParams::Mode::PVP), player(nullptr), opponent(nullptr),
- spriteRenderer(nullptr), radarBoardRenderer(nullptr), mousePosX(0), mousePosY(0), leftClick(false), rightClick(false), shipToPlace(nullptr) {
+/* TODOS:
+	- Fix guessing same square multiple times bug.
+	- Fix being able to guess square outside grid bug.
+	- Fix? memory leak during play state. I think its the markers
+	- Flesh out event system
+	- General cleanup
+	- Reorganize Files
+
+	Maybe:
+	- Rework Multiplayer turn logic
+	- Add GameOver Screen
+	- Add Audio
+	- Add more upcummies
+	- Create Sprite sheet to try and cut down on memory usage
+	- Make gameplay smoother (visuals, delay action from player/opponent etc.)
+*/
+
+Game::Game() {
 }
 
 Game::~Game() {
 	delete net;
 	delete player;
-	Opponent::DeallocOpponent(opponent);
 }
 
 void Game::init() {
@@ -55,9 +71,29 @@ void Game::init() {
 	ResourceManager::getShader("radar2").use().setInt("image", 0);
 	ResourceManager::getShader("radar2").setInt("pings", 1);
 	ResourceManager::getShader("radar2").setMat4("projection", projection);
+	ResourceManager::getShader("radar2").setFloat("radius", 0.62f);
+	ResourceManager::getShader("radar2").setFloat("glowStrength", 0.2f);
+	ResourceManager::getShader("radar2").setVec3("color", glm::vec3(0.0f, 0.6431372549019608f, 0.09019607843137255f)); //green
+	ResourceManager::getShader("radar2").setFloat("fillStrength", 0.3f);
+	ResourceManager::getShader("radar2").setVec2("resolution", glm::vec2(600.0f, 600.0f));
+	ResourceManager::getShader("radar2").setFloat("turn", 0.0f);
 
 
 	//Load Textures
+	// --Menu stuff--
+	ResourceManager::loadTexture("Textures\\MenuTitle.png", GL_RGBA, GL_RGBA, "title");
+	ResourceManager::loadTexture("Textures\\Solo.png", GL_RGBA, GL_RGBA, "solo");
+	ResourceManager::loadTexture("Textures\\PVP.png", GL_RGBA, GL_RGBA, "pvp");
+	ResourceManager::loadTexture("Textures\\Easy.png", GL_RGBA, GL_RGBA, "easy");
+	ResourceManager::loadTexture("Textures\\Medium.png", GL_RGBA, GL_RGBA, "medium");
+	ResourceManager::loadTexture("Textures\\Hard.png", GL_RGBA, GL_RGBA, "hard");
+	ResourceManager::loadTexture("Textures\\Back.png", GL_RGBA, GL_RGBA, "back");
+	ResourceManager::loadTexture("Textures\\Waiting.png", GL_RGBA, GL_RGBA, "waiting");
+	ResourceManager::loadTexture("Textures\\Searching.png", GL_RGBA, GL_RGBA, "searching");
+	ResourceManager::loadTexture("Textures\\Cursor.png", GL_RGBA, GL_RGBA, "cursor");
+	ResourceManager::loadTexture("Textures\\PlaceShips.png", GL_RGBA, GL_RGBA, "placeShips");
+	ResourceManager::loadTexture("Textures\\YourTurn.png", GL_RGBA, GL_RGBA, "yourTurn");
+	ResourceManager::loadTexture("Textures\\OppTurn.png", GL_RGBA, GL_RGBA, "oppTurn");
 
 	// --grids--
 	ResourceManager::loadTexture("Textures\\WaterGrid2.png", GL_RGBA, GL_RGBA, "grid");
@@ -84,223 +120,29 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\fireparticle.png", GL_RGBA, GL_RGBA, "circle");
 
 
-	player = new Player();
-	if (mode == GameParams::Mode::SOLO) {
-		Computer::Difficulty diff = Computer::Difficulty::MEDIUM;
-		opponent = ComputerFactory::InitComputer(diff);
-	}
-	else if (mode == GameParams::Mode::PVP) {
-		opponent = new Player(mode); //Sets Opponent to be an interface of the Player class with a Radar board 
-	}
-	
+
 	effects = new PostProcessor(ResourceManager::getShader("postprocessing"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
 	gridRenderer = new SpriteRenderer(ResourceManager::getShader("grid"));
-    spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
+	spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
 	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
 	shipRenderer = new SpriteRenderer(ResourceManager::getShader("ship"));
 
-	grid = new Entity(glm::vec2(600.0, 0.0), glm::vec2(600.0, 600.0), ResourceManager::getTexture("grid"));
+	grid = new Entity(glm::vec2(600.0f, 0.0f), glm::vec2(600.0f, 600.0f), ResourceManager::getTexture("grid"));
+	menuWater = new Entity(glm::vec2(0.0f, 0.0f), glm::vec2(1200.0f, 600.0f), ResourceManager::getTexture("water"));
+	menuWater->tex2 = ResourceManager::getTexture("waveMap");
 
-}
-
-void Game::handleInput() {
-	SDL_Event event;
-	if (SDL_PollEvent(&event) != NULL) {
-		if (event.type == SDL_QUIT) {
-			exit(0);
-		}
-		SDL_GetMouseState(&mousePosX, &mousePosY);
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if (event.button.button == SDL_BUTTON_LEFT)
-				leftClick = true;
-			else if (event.button.button == SDL_BUTTON_RIGHT)
-				rightClick = true;
-		}
-
-
-	}
+	state = new MenuState(*this);
 }
 
 void Game::update(float dt) {
-	//Hotload shaders
-	if (state == GameParams::State::SETUP) {
-		//The player has placed all the ships
-		if (player->ships.empty()) {			
-			if (mode == GameParams::Mode::SOLO) {
-				//Computer places all it's ships
-				while (!opponent->ships.empty()) {
-					Ship& computerShipRef = opponent->ships.back();
-
-					int row = rand() % 8;
-					int col = rand() % 8;
-
-					computerShipRef.snapToPosition({ row, col });
-
-					if (opponent->board->placeShip(computerShipRef, computerShipRef.coords))
-						opponent->ships.pop_back();
-
-				}
-				//Computer is done placing all it's ships move on to next state.
-				state = GameParams::State::PLAYING;
-				turn = GameParams::Turn::PLAYER;
-			}
-			else {
-				state = GameParams::State::PLAYING;
-			}
-			return;
-		}
-
-		Ship& currentShipRef = player->ships.back();
-
-		/* Clamp position to player board grid square */
-		int mouseXSquare = (mousePosX - SCREEN_WIDTH/2) / Board::SQUARE_PIXEL_SIZE;
-		int mouseYSquare = (mousePosY) / Board::SQUARE_PIXEL_SIZE;
-
-		currentShipRef.snapToPosition({ mouseYSquare, mouseXSquare }); //Ypos = row, Xpos = col.
-
-		if (leftClick) {
-			if (player->board->placeShip(currentShipRef, currentShipRef.coords)) {
-				player->ships.pop_back();
-				player->board->print();
-				std::cout << "\n\n" << std::endl;
-			}
-			else { printf("You can't place a ship there!\n"); }
-			leftClick = false; // "Consumed" left-click event,
-		}
-		else if (rightClick) {
-			currentShipRef.rotate(); //TODO: Rotations are broken right now
-			rightClick = false;
-		}
-	}
-	else if(state == GameParams::State::PLAYING){
-		if (turn == GameParams::Turn::PLAYER) {
-			if (leftClick) {
-				/* Clamp position to player board grid square */
-				int mouseYSquare = (mousePosX) / Board::SQUARE_PIXEL_SIZE; //Vector<Vector> -> XY-Plane rotated 90 deg clockwise -> horizontal movement is on the Y axis
-				int mouseXSquare = (mousePosY) / Board::SQUARE_PIXEL_SIZE; //Vector<Vector> -> XY-Plane rotated 90 deg clockwise -> vertical movement is on the X axis
-				if (opponent->board->alreadyGuessedSquare({ mouseXSquare, mouseYSquare })) {
-					std::cout << "You've already guessed [" << (char) (65 + mouseXSquare) << ":" << mouseYSquare + 1 << "]!" << std::endl; 
-					leftClick = false;
-					return;
-				}
-				if (mode == GameParams::Mode::SOLO) {
-					if (opponent->board->guess({ mouseXSquare, mouseYSquare }, turn)) {
-						std::cout << "GUESS[" << (char)(65 + mouseXSquare) << ":" << mouseYSquare + 1 << "]" << " Hit!" << std::endl; 
-					}
-					else {
-						std::cout << "GUESS[" << (char)(65 + mouseXSquare) << ":" << mouseYSquare +1 << "]" << " Miss!" << std::endl;
-					}
-					turn = GameParams::Turn::OPPONENT;
-					leftClick = false;
-				}
-				else if (mode == GameParams::Mode::PVP)
-				{
-					int resp = net->SendNextGuess(mouseXSquare, mouseYSquare);
-					//Unable to send data to the other player before timeout period expired(60 seconds)
-					if (resp == 0) {
-						std::cout << "Lost connection to peer...\n";
-						std::cout << "Game Over!\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-
-					turn = GameParams::Turn::OPPONENT;
-					leftClick = false;
-					return;
-				}
-				
-			}
-		}
-		else {
-			if(mode == GameParams::Mode::SOLO) {
-				int numShips = player->board->activeShips.size();
-				std::pair<int, int> computerGuess = opponent->GuessCoordinate();
-				bool hit = player->board->guess(computerGuess, turn);
-
-				if (hit) {
-					spawnFire(computerGuess);
-					shakeScreen();
-				}
-
-				opponent->hitStreak = hit;
-			
-				if (numShips > player->board->activeShips.size()) {
-					opponent->SankShip();
-				}
-				turn = GameParams::Turn::PLAYER;
-			}
-			else if(mode == GameParams::Mode::PVP) {
-				auto buffer = net->ReceiveData();
-				if (buffer.bufferType == Payload::BufferType::GUESS_RESULT) {
-					if (buffer.prevGuessHit == true) {
-						std::cout << "GUESS[" << (char)(65 + buffer.xChoordGuess) << ":" << buffer.yChoordGuess + 1 << "]" << " Hit!" << std::endl; //TODO CONVERT TO ALPHA
-					}
-					else {
-						std::cout << "GUESS[" << (char)(65 + buffer.xChoordGuess) << ":" << buffer.yChoordGuess + 1 << "]" << " Miss!" << std::endl; //TODO CONVERT TO ALPHA
-					}	
-					opponent->board->markSquare({ buffer.xChoordGuess, buffer.yChoordGuess }, buffer.prevGuessHit);
-				}
-				else if (buffer.bufferType == Payload::BufferType::NEXT_GUESS) {
-					std::pair<int, int> oppGuess = { buffer.xChoordGuess, buffer.yChoordGuess };
-					bool oppGuessRes = player->board->guess(oppGuess, turn);
-
-					if (oppGuessRes) {
-						spawnFire(oppGuess);
-						shakeScreen();
-					}
-
-					int resp = 0;
-					if (player->board->activeShips.empty()) {
-						resp = net->SendGameOver();
-						std::cout << "Opponent has Won.\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-					else {
-						resp = net->SendGuessResult(oppGuess.first, oppGuess.second, oppGuessRes);
-					}
-
-					//Failed to get a response from the other player before the timeout period expired (60 seconds)
-					if (resp == 0) {
-						std::cout << "Lost connection to peer...\n";
-						std::cout << "Game Over!\n";
-						state = GameParams::State::OVER;
-						return;
-					}
-					turn = GameParams::Turn::PLAYER;
-				}
-				else if (buffer.bufferType == Payload::BufferType::GAME_OVER) {
-					std::cout << "You've Won!\n";
-					state = GameParams::State::OVER;
-					return;
-				}
-			}
-
-		}
-
-		if (mode == GameParams::Mode::SOLO) {
-			if (player->board->activeShips.empty()) {
-				std::cout << "Computer Won!" << std::endl;
-				state = GameParams::State::OVER;
-			}
-			else if (opponent->board->activeShips.empty()) {
-				std::cout << "You've Won!" << std::endl;
-				state = GameParams::State::OVER;
-			}
-		}
-
-	}
-	else if (state == GameParams::State::OVER) {
-		exit(0);
-	}
-
-	for (auto fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
-		fireEmitter->update(dt, 8, glm::vec2(35.0f));
+	state->update();
+	for (auto& fireEmitter = fireEmitters.begin(); fireEmitter != fireEmitters.end(); fireEmitter++) {
+		fireEmitter->update(dt, 4, glm::vec2(35.0f));
 	}
 	for (auto& smokeEmitter : smokeEmitters) {
-		smokeEmitter.update(dt, 3, glm::vec2(35.0f, 15.0f));
+		smokeEmitter.update(dt, 2, glm::vec2(35.0f, 15.0f));
 	}
 
 	//update postprocessing effects
@@ -311,78 +153,17 @@ void Game::update(float dt) {
 		}
 	}
 
-
 }
+
 
 void Game::render(float dt) {
-	renderRadarPings();
-
-	//update uniforms
-	ResourceManager::getShader("grid").use().setFloat("iTime", mticks());
-	ResourceManager::getShader("water").use().setFloat("iTime", mticks());
-
-	//testing new radar effect.
-	//TODO: these don't need to be done with uniforms right now.
-	ResourceManager::getShader("radar2").use().setFloat("time", mticks());
-	ResourceManager::getShader("radar2").use().setFloat("radius", 0.62f);
-	ResourceManager::getShader("radar2").use().setFloat("glowStrength", 0.2f);
-	ResourceManager::getShader("radar2").use().setVec3("color", glm::vec3(0.0f, 0.6431372549019608f, 0.09019607843137255f)); //green
-	ResourceManager::getShader("radar2").use().setFloat("fillStrength", 0.3f);
-	ResourceManager::getShader("radar2").use().setVec2("resolution", glm::vec2(600.0f, 600.0f));
-
-	//Render to off-screen buffer for postprocessing effects
-	effects->beginRender();
-
-	opponent->board->draw(*radarBoardRenderer);
-	player->board->draw(*waterRenderer);
-	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
-	grid->draw(*gridRenderer);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-
-	//Draw miss markers where opponent guessed wrong
-	for(auto square : player->board->guessedSquares){
-		if (!square.occupied) {
-			Marker miss(Marker::Type::MISS, glm::vec2(600 + square.col * SQUARE_PIXEL_SIZE, square.row * SQUARE_PIXEL_SIZE));
-			miss.draw(*spriteRenderer);
-		}
-	}
-
-	//draw placed ships on player's board
-	for (auto& ship : player->board->activeShips) {
-		ship.draw(*shipRenderer);
-	}
-	
-	for (auto& fireEmitter : fireEmitters) {
-		fireEmitter.draw();
-	}
-	for (auto& smokeEmitter : smokeEmitters) {
-		smokeEmitter.draw();
-	}
-
-	//draw placing ship if you are in setup
-	if (state == GameParams::State::SETUP) {
-		if (!player->ships.empty())
-			shipToPlace = &(player->ships.back());
-
-		//If there is a ship currently to place and it's current inside the player board part of the screen, draw it.
-		if (shipToPlace != nullptr && shipToPlace->position.x >= 600.0f) {
-			shipToPlace->draw(*shipRenderer);		
-		}
-	}	
-
-	removeUnderwaterFire();
-
-	//after redering whole scene to off-screen buffer, apply postprocessing affects and blit to screen.
-	effects->endRender();
-	effects->render(shakeTime);
-	
+	state->render();
 }
 
 
-void Game::spawnFire(std::pair<int,int> square) {
+void Game::spawnFire(std::pair<int, int> square) {
 	glm::vec2 squarePos = glm::vec2(square.first, square.second);
-	ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 1000, squarePos, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
+	ParticleEmitter fireEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 500, squarePos, glm::vec4(0.8, 0.2, 0.0, .3), glm::vec4(1.0, 0.0, 0.0, 0.0));
 	ParticleEmitter smokeEmitter(ResourceManager::getShader("particle"), ResourceManager::getTexture("circle"), 300, squarePos, glm::vec4(0.2, 0.2, 0.2, 0.05), glm::vec4(0.0, 0.0, 0.0, 0.0),
 		GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	fireEmitters.push_back(fireEmitter);
@@ -394,9 +175,9 @@ void Game::removeUnderwaterFire() {
 	//This logic is pretty gnarly because removing an iterator invalidates the iterator.
 	auto fireEmitter = fireEmitters.begin();
 	auto smokeEmitter = smokeEmitters.begin();
-	while (fireEmitter != fireEmitters.end()) 
+	while (fireEmitter != fireEmitters.end())
 	{
-		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y};
+		std::pair<int, int> emmiterPos = { fireEmitter->emmiterSquare.x, fireEmitter->emmiterSquare.y };
 		if (!player->board->squareOccupied(emmiterPos)) {
 			fireEmitter = fireEmitters.erase(fireEmitter);
 			smokeEmitter = smokeEmitters.erase(smokeEmitter);
@@ -409,9 +190,7 @@ void Game::removeUnderwaterFire() {
 	}
 }
 
-
 void Game::renderRadarPings() {
-	//render radar information to offscreen buffer based of hit's and misses from player.
 	unsigned int FBO;
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -419,8 +198,8 @@ void Game::renderRadarPings() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ResourceManager::getTexture("pings").ID, 0);
 	//check if FBO is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::RADAR PINGS: Failed to initialize FBO" << std::endl;
-    
+		std::cout << "ERROR::RADAR PINGS: Failed to initialize FBO" << std::endl;
+
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//now actually render to the texture.
@@ -435,48 +214,32 @@ void Game::renderRadarPings() {
 		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &FBO);
 }
 
 float Game::mticks()
 {
-    typedef std::chrono::high_resolution_clock clock;
-    typedef std::chrono::duration<float, std::milli> duration;
+	typedef std::chrono::high_resolution_clock clock;
+	typedef std::chrono::duration<float, std::milli> duration;
 
-    static clock::time_point start = clock::now();
-    duration elapsed = clock::now() - start;
-    return elapsed.count() / 1000;
+	static clock::time_point start = clock::now();
+	duration elapsed = clock::now() - start;
+	return elapsed.count() / 1000;
 }
 
-void Game::updateShaders() {
-	ResourceManager::hotReload();
-	delete waterRenderer;
-	waterRenderer = nullptr;
-	delete radarBoardRenderer;
-	radarBoardRenderer = nullptr;
-	delete spriteRenderer;
-	spriteRenderer = nullptr;
-	
-	glm::mat4 projection = glm::ortho<GLfloat>(0.0f, static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f, 1.0f);
-
-	//Configure shaders
-	ResourceManager::getShader("water").use().setInt("image", 0);
-	ResourceManager::getShader("water").setMat4("projection", projection);
-	ResourceManager::getShader("basic_sprite").use().setInt("image", 0);
-	ResourceManager::getShader("basic_sprite").setMat4("projection", projection);
-	ResourceManager::getShader("radar2").use().setInt("image", 0);
-	ResourceManager::getShader("radar2").setMat4("projection", projection);
-
-
-
-	waterRenderer = new SpriteRenderer(ResourceManager::getShader("water"));
-    spriteRenderer = new SpriteRenderer(ResourceManager::getShader("basic_sprite"));
-	radarBoardRenderer = new SpriteRenderer(ResourceManager::getShader("radar2"));
-
-}
-
-void Game::changeDifficulty(Computer::Difficulty compDiff) {
-	if (mode == GameParams::Mode::SOLO) {
-		Opponent::DeallocOpponent(opponent);
-		opponent = ComputerFactory::InitComputer(compDiff);
+void Game::onNotify(Event* event) {
+	switch (event->eventType) {
+	case Event::Type::PLAYER_HIT: {
+		if (activePlayer == opponent) {
+			//this if check is technically redunant right now!
+			PlayerHit* hitEvent = static_cast<PlayerHit*>(event); //THIS IS TERRIBLE. NOT SURE THE CORRECT WAY TO DO THIS
+			spawnFire(hitEvent->coord);
+			shakeScreen();
+		}
+		break;
 	}
+	case Event::Type::SHIP_SANK: { break; }
+	default: { break; }
+	}
+	delete event;
 }

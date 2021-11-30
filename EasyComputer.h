@@ -1,15 +1,10 @@
 #pragma once
-#include "Computer.h"
+#include "ComputerGuessStrategy.h"
 
-class EasyComputer : public Computer
+class EasyComputer : public ComputerGuessStrategy
 {
 	public:
-		//Computer board which looks like a radar board to the player
-		EasyComputer(const Difficulty& d);
-
-		std::pair<int, int> GuessCoordinate();
-
-		void SankShip();
+		void guess(Player& player, Player& opponent) override;
 };
 
 

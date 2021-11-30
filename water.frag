@@ -13,14 +13,14 @@ uniform sampler2D waveMap;
 void main()
 {
     //TODO: FIX UVS!
-    //vec2 uv = vec2((gl_FragCoord.x - 600)/600.0 , gl_FragCoord.y/600.0);
-    vec2 uv = TexCoord;
+    vec2 uv = vec2((gl_FragCoord.x - 600)/600.0 , gl_FragCoord.y/600.0);
+    //vec2 uv = TexCoord;
                    
    	//background color rgb( 49/255, 169/255, 238/255, 255/255 ) -- 0.192156862745098, 0.6627450980392157, 0.9333333333333333
     //vec4 texture_color = vec4(0.192156862745098, 0.6627450980392157, 0.9333333333333333, 1.0);
 
-    vec4 texture_color = texture(image, uv);
-    vec4 waveMap = texture(waveMap, vec2(uv.x, -uv.y) + iTime/30);
+    vec4 texture_color = texture(image, TexCoord);
+    vec4 waveMap = texture(waveMap, vec2(uv.x, uv.y) + iTime/30);
     //vec4 k = vec4(1.0);
     //vec4 k = vec4(iTime)*0.8;
 	//k.xy = uv * 6.0;

@@ -1,67 +1,51 @@
 #pragma once
+#include "SpriteRenderer.h"
+#include "Player.h"
+#include "ParticleEmitter.h"
+#include "PostProcessor.h"
+#include "GameState.h"
+#include "Observer.h"
+#include "Menu.h"
 #include "PeerNetwork.h"
 #include "ConnectingPeer.h"
 #include "HostingPeer.h"
-#include "SpriteRenderer.h"
-#include "Player.h"
-#include "ComputerFactory.h"
 
 
-#include "ParticleEmitter.h"
-#include "PostProcessor.h"
-class Game
+class Game : public Observer
 {
-	public:
+public:
+
 	static const int SCREEN_WIDTH = 1200;
 	static const int SCREEN_HEIGHT = 600;
-
-
-	static const int SQUARE_PIXEL_SIZE = 75; //Magic numbers WOW!
+	static const int SQUARE_PIXEL_SIZE = 75;
 	static const int SQUARE_PIXEL_HEIGHT = 75;
 
-	PeerNetwork* net;
-	GameParams::State state;
-	GameParams::Turn turn;
-	GameParams::Mode mode;
-	Player* player;
-	Opponent* opponent;
-
-	Entity* grid;
-	
-	SpriteRenderer* waterRenderer;
-	SpriteRenderer* spriteRenderer;
-	SpriteRenderer* radarBoardRenderer;
-	SpriteRenderer* gridRenderer;
-	SpriteRenderer* shipRenderer;
-	
-	PostProcessor* effects;
-
-	
-
-	bool humanTurn;
-
-	Game(Computer::Difficulty compDiff);
-	Game(PeerNetwork* network);
 	Game();
 	~Game();
 
+	PeerNetwork* net;
+	Player* player, *opponent, *activePlayer, *inactivePlayer;
+	Entity* grid, *menuWater;
+	SpriteRenderer* waterRenderer, *spriteRenderer, *radarBoardRenderer, *gridRenderer, *shipRenderer;
+	PostProcessor* effects;
+	GameState* state;
+
+	std::stack<Menu*> menus;
+
+	const std::string networkStartIp = "127.0.0.1"; //"67.248.183.2";
+
 	void init();
-	void handleInput();
 	void update(float dt);
 	void render(float dt);
 
-	void changeDifficulty(Computer::Difficulty compDiff);
-	//Static functions to load game?
-	// PLACEHOLDER
-	// PLACEHOLDER
+	void onNotify(Event* event) override;
 
-private:
-	void updateShaders();
-	//Returns seconds since epoch as float. Used to set uniforms.
-	float mticks();
-
-	void renderRadarPings();
-
+	//swap who's turn it is
+	void endTurn() {
+		Player* temp = activePlayer;
+		activePlayer = inactivePlayer;
+		inactivePlayer = temp;
+	}
 	//Spawn fire particle effect at specified square when the player gets hit
 	void spawnFire(std::pair<int,int> square);
 	//Screen shake post-processing effect that happens when the player gets hit
@@ -69,18 +53,16 @@ private:
 		shakeTime = 0.2f;
 		effects->shake = true;
 	}
+
+	//Returns seconds since epoch as float. Used to set uniforms.
+	float mticks();
+	//Render radar hitmarkers to texture for radar frag shader to use
+	void renderRadarPings();
 	//Remove fire emitters that were on a ship which sank
 	void removeUnderwaterFire();
 
-	//Input events we care about.
-	int mousePosX, mousePosY;
-	bool leftClick, rightClick;
-	//Ship the palyer is placing;
-	Ship* shipToPlace;
-
 	//TODO: move this to a more sensible place.
-	float shakeTime = 0.0f;
-
+	float shakeTime;
 	std::vector<ParticleEmitter> fireEmitters;
 	std::vector<ParticleEmitter> smokeEmitters;
 

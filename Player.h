@@ -1,25 +1,34 @@
 #pragma once
-#include "Opponent.h"
+#include "Board.h"
+#include "GuessStrategy.h"
+#include <functional>
+#include "ShipPlacementStrategy.h"
+#include "PeerNetwork.h"
 
-class Player : public Opponent{
-	public:
-		Player() {
-			board = new Board(Board::Type::PLAYER);
-		}
-		Player(GameParams::Mode pvp) {
-			board = new Board(Board::Type::RADER);
-		}
+class Player {
+public:
 
-	/* Not a huge fan of just hidding unimplemented overloads... */
-	private:
-			std::pair<int, int> GuessCoordinate() { 
-				//NOT IMPLEMENTED FOR PLAYER 
-				return { -1, -1};
-			}
+	static Player* createHeroSinglePlayer();
+	static Player* createHeroMultiPlayer(PeerNetwork& net);
+	static Player* createHumanOpponent();
+	static Player* createEasyComputer();
+	static Player* createMediumComputer();
+	static Player* createHardComputer();
+	static Player* createExpertComputer();
 
-			void SankShip() { 
-				//NOT IMPLEMENTED FOR PLAYER
-				return;
-			}
+	void guess(Player& opponent) {	guessStrategy->guess(*this, opponent); }
+	void placeShip() { placementStrategy->place(); }
+	
+	Board* board;
+	std::vector<Ship> ships = { Ship(Ship::Type::CARRIER), Ship(Ship::Type::BATTLESHIP), Ship(Ship::Type::CRUISER), Ship(Ship::Type::SUBMARINE), Ship(Ship::Type::DESTROYER) };
+	Ship* shipToPlace;
+
+private:
+	ShipPlacementStrategy* placementStrategy;
+	GuessStrategy* guessStrategy;
+
+	Player(Board* board, GuessStrategy* guessStrategy) : board(board), guessStrategy(guessStrategy) {}
+	void setPlacementStrategy(ShipPlacementStrategy* placement) { this->placementStrategy = placement; }
+
 };
 

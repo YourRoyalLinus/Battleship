@@ -7,7 +7,8 @@ class Payload {
 			TURN,
 			NEXT_GUESS,
 			GUESS_RESULT,
-			GAME_OVER
+			GAME_OVER,
+			EMPTY
 		};
 		struct Buffer {
 			int xChoordGuess = -1;

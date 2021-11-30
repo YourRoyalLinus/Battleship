@@ -2,7 +2,7 @@
 #include "Shader.h"
 #include "Texture2D.h"
 #include "Entity.h"
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include <vector>
 
 struct Particle {

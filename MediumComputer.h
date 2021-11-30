@@ -1,14 +1,8 @@
 #pragma once
-#include "Computer.h"
+#include "ComputerGuessStrategy.h"
 
-class MediumComputer : public Computer
+class MediumComputer : public ComputerGuessStrategy
 {
-	public:
-		//Computer board which looks like a radar board to the player
-		MediumComputer(const Difficulty& d);
-
-		std::pair<int, int> GuessCoordinate();
-
-		void SankShip();
+	void guess(Player& player, Player& opponent) override;
 };
 

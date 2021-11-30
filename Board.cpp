@@ -9,13 +9,13 @@ const glm::vec2 Board::RADAR_BOARD_POSITION = glm::vec2(0.0f, 0.0f);
 const glm::vec2 Board::SIZE = glm::vec2(600.0f, 600.0f);
 
 //TODO: THIS CONSTRUCTOR IS A FUCKING MESS 
-Board::Board(Type type) : type(type), Entity(type == Type::PLAYER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::PLAYER ? "water" : "radar")) {
+Board::Board(Type type) : type(type), Entity(type == Type::WATER ? PLAYER_BOARD_POSITION : RADAR_BOARD_POSITION, SIZE, ResourceManager::getTexture( type == Type::WATER ? "water" : "radar")) {
 	//TODO: CLEAN THIS UP
-	if (type == Type::PLAYER) {
-		waveMap = ResourceManager::getTexture("waveMap");
+	if (type == Type::WATER) {
+		tex2 = ResourceManager::getTexture("waveMap");
 	}
 	else if (type == Type::RADER) {
-		waveMap = ResourceManager::getTexture("pings");
+		tex2 = ResourceManager::getTexture("pings");
 	}
 	/*Initialize the squares on the board with their Coordinates and being unoccupied*/
 	std::vector<Square> currentRow;
@@ -92,7 +92,11 @@ std::vector<Square> Board::occupiedSquares() {
 }
 
 
-bool Board::guess(const std::pair<int, int> coord, GameParams::Turn turn) {
+bool Board::guess(const std::pair<int, int> coord) {
+	if (sunkShip) {
+		sunkShip = false;
+	}
+
 	bool validSquare = validCoord(coord);
 	//If you tried to guess at an invalid position
 	if (!validSquare)
@@ -108,13 +112,18 @@ bool Board::guess(const std::pair<int, int> coord, GameParams::Turn turn) {
 	}
 	//TODO this is really ugly and can probably be done a better way! Should the board even be doing this?
 	if (hit) {
-		damageHitShip(coord, turn);
+		//tell observers that a player's ship was hit!
+		this->notify(new PlayerHit(coord));
+		damageHitShip(coord);
 	}
 	guessedSquares.push_back(square);
 	return hit;
 }
 
 bool Board::alreadyGuessedSquare(const std::pair<int, int> coord) {
+	if (!validCoord(coord)) {
+		return false;
+	}
 	for (auto sq : guessedSquares) {
 		if (sq.row == coord.first && sq.col == coord.second) {
 			return true;
@@ -138,7 +147,7 @@ bool Board::validCoord(const std::pair<int, int> coord) {
 	return coord.first < BOARD_WIDTH && coord.second < BOARD_HEIGHT && coord.first >= 0 && coord.second >= 0;
 }
 
-void Board::damageHitShip(std::pair<int,int> coord, GameParams::Turn turn) {
+void Board::damageHitShip(std::pair<int,int> coord) {
 	for (auto currentShip = activeShips.begin(); currentShip != activeShips.end(); currentShip++) {
 		auto hitSquare = std::find(currentShip->coords.begin(), currentShip->coords.end(), coord);
 		if (hitSquare != currentShip->coords.end()) //if the ship contains the coord guess
@@ -149,51 +158,52 @@ void Board::damageHitShip(std::pair<int,int> coord, GameParams::Turn turn) {
 				for (auto coord : currentShip->coords) {
 					squares[coord.first][coord.second].occupied = false;
 				}
-				damageSankShip(*currentShip, turn);
+				//damageSankShip(*currentShip);
 				currentShip = activeShips.erase(currentShip);
+				sunkShip = true;
 				break;
 			}
 		}
 	}
 }
 
-void Board::damageSankShip(Ship ship, GameParams::Turn turn) {
-	std::string shipType;
-	std::string sinker;
-	std::string sinkee;
+//void Board::damageSankShip(Ship ship) {
+//	std::string shipType;
+//	std::string sinker;
+//	std::string sinkee;
+//
+//	switch (ship.type) {
+//	case Ship::Type::BATTLESHIP:
+//		shipType = "BattleShip";
+//		break;
+//	case Ship::Type::CARRIER:
+//		shipType = "Carrier";
+//		break;
+//	case Ship::Type::CRUISER:
+//		shipType = "Cruiser";
+//		break;
+//	case Ship::Type::DESTROYER:
+//		shipType = "Destroyer";
+//		break;
+//	case Ship::Type::SUBMARINE:
+//		shipType = "Submarine";
+//		break;
+//	}
+//	if (turn == GameParams::Turn::PLAYER) {
+//		sinker = "Player";
+//		sinkee = "Opponent";
+//	}
+//	else {
+//		sinker = "Opponent";
+//		sinkee = "Player";
+//	}
+//
+//	std::cout << sinker << " has sunk " << sinkee << "'s " << shipType << "!" << std::endl;
+//}
 
-	switch (ship.type) {
-	case Ship::Type::BATTLESHIP:
-		shipType = "BattleShip";
-		break;
-	case Ship::Type::CARRIER:
-		shipType = "Carrier";
-		break;
-	case Ship::Type::CRUISER:
-		shipType = "Cruiser";
-		break;
-	case Ship::Type::DESTROYER:
-		shipType = "Destroyer";
-		break;
-	case Ship::Type::SUBMARINE:
-		shipType = "Submarine";
-		break;
-	}
-	if (turn == GameParams::Turn::PLAYER) {
-		sinker = "Player";
-		sinkee = "Opponent";
-	}
-	else {
-		sinker = "Opponent";
-		sinkee = "Player";
-	}
-
-	std::cout << sinker << " has sunk " << sinkee << "'s " << shipType << "!" << std::endl;
-}
-
-void Board::draw(SpriteRenderer& spriteRenderer) {
-	spriteRenderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(0), this->waveMap);
-}
+//void Board::draw(SpriteRenderer& spriteRenderer) {
+//	spriteRenderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color, glm::vec2(0), this->waveMap);
+//}
 
 Board::~Board() {
 
