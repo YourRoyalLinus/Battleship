@@ -32,7 +32,7 @@ public:
 
 	std::stack<Menu*> menus;
 
-	const std::string networkStartIp = "127.0.0.1"; //"67.248.183.2";
+	const std::string networkStartIp = "127.0.0.1";
 
 	void init();
 	void update(float dt);

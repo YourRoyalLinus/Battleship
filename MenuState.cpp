@@ -62,7 +62,7 @@ void MenuState::selectMenuOption(MenuItem& menuItem) {
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::EASY, glm::vec2(600.0f - (200.0f / 2.0f), 80.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("easy")));
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::MEDIUM, glm::vec2(600.0f - (200.0f / 2.0f), 180.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("medium")));
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::HARD, glm::vec2(600.0f - (200.0f / 2.0f), 280.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("hard")));
-		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::EXPERT, glm::vec2(600.0f - (200.0f / 2.0f), 380.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("hard"))); //TODO: CREATE EXPERT TEXTURE
+		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::EXPERT, glm::vec2(600.0f - (200.0f / 2.0f), 380.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("expert")));
 		difficultyMenu->addMenuItem(new MenuItem(MenuItem::ItemType::BACK, glm::vec2(600.0f - (200.0f / 2.0f), 480.0f), glm::vec2(200.0f, 90.0f), ResourceManager::getTexture("back")));
 		difficultyMenu->init();
 		game.menus.push(difficultyMenu);
