@@ -1,5 +1,5 @@
 #pragma once
-#define DEFAULT_PORT "1234"
+#define DEFAULT_PORT "42996"
 #define DEFAULT_BUFFER_LEN 1024 //2^10 BYTES
 #include <tuple>
 #include <string>
@@ -100,9 +100,8 @@ class Peer {
 		void setBlocking(bool blocking) {
 			assert(gameSocket != INVALID_SOCKET);
 			u_long blockingMode = blocking? 0 : 1;  //0 for blocking, 1 for non-blocking
-			int result = ioctlsocket(this->gameSocket, FIONBIO, &blockingMode);
-			if (result != 0) {
-				std::cout << "ioctlsocket failed with error:" << WSAGetLastError() << ".";
+			if (int result = ioctlsocket(this->gameSocket, FIONBIO, &blockingMode) != 0) {
+				std::cout << "ioctlsocket failed with error:" << result << ".";
 			}
 		}
 

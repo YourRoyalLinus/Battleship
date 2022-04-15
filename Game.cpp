@@ -87,6 +87,7 @@ void Game::init() {
 	ResourceManager::loadTexture("Textures\\Easy.png", GL_RGBA, GL_RGBA, "easy");
 	ResourceManager::loadTexture("Textures\\Medium.png", GL_RGBA, GL_RGBA, "medium");
 	ResourceManager::loadTexture("Textures\\Hard.png", GL_RGBA, GL_RGBA, "hard");
+	ResourceManager::loadTexture("Textures\\Expert.png", GL_RGBA, GL_RGBA, "expert");
 	ResourceManager::loadTexture("Textures\\Back.png", GL_RGBA, GL_RGBA, "back");
 	ResourceManager::loadTexture("Textures\\Waiting.png", GL_RGBA, GL_RGBA, "waiting");
 	ResourceManager::loadTexture("Textures\\Searching.png", GL_RGBA, GL_RGBA, "searching");
