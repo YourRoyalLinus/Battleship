@@ -125,7 +125,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="..\..\..\..\vclib\glad\src\glad.c" />
     <ClCompile Include="ComputerShipPlacement.cpp" />
     <ClCompile Include="ConnectingState.cpp" />
     <ClCompile Include="DiagonalOpeningStrategy.cpp" />
