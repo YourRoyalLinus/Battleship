@@ -69,12 +69,12 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Jon\vclib\cereal-1.3.0\include;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\lib\cereal-1.3.0\include;..\lib\glad\include\KHR;..\lib\glad\include\glad;..\lib\stb-master;..\lib\SDL2_image-2.0.5\include;..\lib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Jon\vclib\cereal-1.3.0\include;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\glm-0.9.6.3\glm;C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\SDL2_image-2.0.5\include;C:\Users\Jon\vclib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Jon\vclib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\lib\cereal-1.3.0\include;..\lib\glad\include\KHR;..\lib\glad\include\glad;..\lib\stb-master;..\lib\SDL2_image-2.0.5\include;..\lib\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,7 +112,7 @@
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Jon\vclib\glm\glm;C:\Users\Jon\vclib\glad\include\KHR;C:\Users\Jon\vclib\glad\include\glad;C:\Users\Jon\vclib\stb-master;C:\Users\Jon\vclib\cereal-1.3.0\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\lib\glm\glm;..\lib\glad\include\KHR;..\lib\glad\include\glad;..\lib\stb-master;..\lib\cereal-1.3.0\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,10 +122,11 @@
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\lib\glm\glm;..\lib\glad\include\KHR;..\lib\glad\include\glad;..\lib\stb-master;..\lib\cereal-1.3.0\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\vclib\glad\src\glad.c" />
+    <ClCompile Include="..\lib\glad\src\glad.c" />
     <ClCompile Include="ComputerShipPlacement.cpp" />
     <ClCompile Include="ConnectingState.cpp" />
     <ClCompile Include="DiagonalOpeningStrategy.cpp" />
