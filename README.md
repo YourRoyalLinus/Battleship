@@ -26,7 +26,7 @@ The process of enabling PvP is extraordinarily user-unfriendly and is the source
 
   Player A | Player B
   :-: | :-:
-  <video src="https://user-images.githubusercontent.com/52103944/163855854-22dcb86b-f23c-4221-aad0-46e603c8ecc4.mp4" width=200/> | <video src="https://user-images.githubusercontent.com/52103944/163856800-e335e66a-5b58-451f-83c4-3c7a1dc682a8.mp4" width=180/>
+  <video src="https://user-images.githubusercontent.com/52103944/164942738-97e3b31a-d797-40ec-9cfe-f1db1ee54727.mp4" width=200/> | <video src="https://user-images.githubusercontent.com/52103944/164942816-cfd0703d-d780-48d7-b6e7-518ef26dd0aa.mp4" width=180/>
 
 ## Development
 
