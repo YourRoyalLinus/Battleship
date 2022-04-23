@@ -10,6 +10,7 @@
 #include <ws2tcpip.h>
 #include "Payload.h"
 #include <assert.h>
+#pragma comment(lib,"WS2_32")
 
 class Peer {	
 	public:
